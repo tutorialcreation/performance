@@ -32,9 +32,9 @@ class Team(models.Model):
 
 class Task(models.Model):
     title = models.CharField(max_length=50)
-    desc = models.TextField(default="", max_length=1024, blank=True)
-    client_code = models.TextField(default="", max_length=1024, blank=True)
-    client_name = models.TextField(default="", max_length=1024, blank=True)
+    desc = models.TextField(default="test", max_length=1024, null=True,blank=True)
+    client_code = models.TextField(default="test", max_length=1024, null=True,blank=True)
+    client_name = models.TextField(default="test", max_length=1024, null=True,blank=True)
     STATUS_CHOICES = (
         ('PLAN', 'Planned'),
         ('PROG', 'In Progress'),
@@ -53,7 +53,7 @@ class Task(models.Model):
     accepted_by = models.ForeignKey(UserModel, on_delete=models.SET_NULL, null=True, related_name='accepted_tasks',
                                     blank=True)
     due_date = models.DateField()
-    revised_due_date = models.DateField(null=True, blank=True)
+    revised_due_date = models.DateField(null=True, blank=True,default=datetime.date(2020,1,1))
     date_accepted = models.DateField(null=True, blank=True)
     completed_date = models.DateField(null=True, blank=True)
 

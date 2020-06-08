@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-import django_heroku
 import os
 
 
@@ -25,7 +24,7 @@ SECRET_KEY = '@jdf01zf3u9vyqv62^kjf=f2%^#sh2taf0x=6%#o0-_xa=1gb*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'f5a289f3.ngrok.io', ]
+ALLOWED_HOSTS = ['*']
 
 # Email Settings
 EMAIL_HOST = os.getenv('EMAIL_HOST', '')
@@ -112,14 +111,19 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', ''),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'USER': os.getenv('DB_USER', ''),
-        'PORT': '5432',
+     'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+ 
+#'default': {
+ #       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+  #      'NAME': os.getenv('DB_NAME', ''),
+   #     'PASSWORD': os.getenv('DB_PASSWORD', ''),
+    #    'HOST': os.getenv('DB_HOST', ''),
+     #   'USER': os.getenv('DB_USER', ''),
+      #  'PORT': '5432',
+    #}
 }
 
 
@@ -182,7 +186,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'staticfiles')
 
 # THIS KEEPS THE PROJECT FILES - CSS/JS/IMAGES/FONTS
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 
 # MEDIA - UPLOADED FILES/IMAGES
@@ -199,6 +203,5 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 
-django_heroku.settings(locals())
 
 

@@ -27,9 +27,9 @@ from taskmanager.models import Team, Task, Comment
 from taskmanager.forms.taskforms import TaskCreationForm, TaskEditForm
 from django.urls import reverse, reverse_lazy
 
-@celery_app.task(name="test-celery")
-def test_celery():
-    print("working >>>>>>>>>>>>>>>")
+#@celery_app.task(name="test-celery")
+#def test_celery():
+ #   print("working >>>>>>>>>>>>>>>")
 
 @login_required
 @require_http_methods(["GET", "POST"])

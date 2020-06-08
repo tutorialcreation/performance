@@ -55,7 +55,7 @@ celery_app.conf.beat_schedule = {
 class LevelStructureIndex(generic.ListView):
     model = InputData
     template_name = 'levels/datastructures.html'
-    test_celery.delay()
+#    test_celery.delay()
 
     # bread_crumbs = InputData.get_levels.all()
 

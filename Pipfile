@@ -4,8 +4,6 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pylint = "*"
-autopep8 = "*"
 
 [packages]
 django = "*"
@@ -21,7 +19,6 @@ django-mathfilters = "*"
 django-extensions = "*"
 django-select2 = "*"
 django-phonenumber-field = "*"
-psycopg2-binary = "*"
 phonenumbers = "*"
 pandas = "*"
 numpy = "*"
@@ -34,9 +31,6 @@ weasyprint = "*"
 coverage = "*"
 celery = "*"
 gunicorn = "*"
-django-heroku = "*"
-ipython = "*"
-notebook = "*"
 
 [requires]
 python_version = "3.6"

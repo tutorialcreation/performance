@@ -14,9 +14,9 @@ class TaskCreationForm(ModelForm):
         widget=forms.DateInput(attrs={"type": "date", "class": "w3-input"})
     )
 
-    revised_due_date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date", "class": "w3-input"})
-    )
+   # revised_due_date = forms.DateField(
+    #    widget=forms.DateInput(attrs={"type": "date", "class": "w3-input","required":"false"})
+    #)
 
     date_accepted = forms.DateField(
         widget=forms.DateInput(attrs={"type": "date", "class": "w3-input"})
@@ -46,7 +46,7 @@ class TaskCreationForm(ModelForm):
 
     class Meta:
         model = Task
-        fields = ('title','date_accepted','due_date','revised_due_date','team')
+        fields = ('title','date_accepted','due_date','team',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,7 +73,7 @@ class TaskEditForm(ModelForm):
 
     class Meta:
         model = Task
-        fields = ('title', 'desc', 'due_date', 'team', 'assigned_to')
+        fields = ('title', 'desc', 'due_date', 'team', 'assigned_to',)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -22,6 +22,7 @@
     <link href="{% static 'css/pe-icon-7-stroke.css' %}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <!--    w3 css-->
+     <link rel = "stylesheet" href = "https://www.w3schools.com/lib/w3.css">
     <link href="{% static 'taskmanager/w3.css' %}" rel="stylesheet"/>
     <link href="{% static 'css/animate.min.css' %}" rel="stylesheet"/>
     <!-- Custom styles for this template -->
@@ -277,7 +278,7 @@
                             </a>
                         </li>
                         <li class="dropdown">
-                            <a id="user-profile" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://lorempixel.com/100/100/people/9/" class="img-responsive img-thumbnail img-circle"> Username</a>
+                            <a id="user-profile" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://lorempixel.com/100/100/people/9/" class="img-responsive img-thumbnail img-circle">{{request.user.username}}</a>
                             <ul class="dropdown-menu dropdown-block" role="menu">
                                 <li><a href="#">Profil edition</a></li>
                                 <li><a href="#">Admin</a></li>
@@ -311,9 +312,14 @@
                         <b class="caret"></b>
                     </a>
                     <ul id="submenu-2" class="panel-collapse collapse panel-switch" role="menu">
+			{% if request.user.is_superuser and request.user.is_staff %}
                         <li><a href="{% url 'taskmanager:team_create' %}"><i class="fa fa-angle-double-right"></i>Create Team</a></li>
-                        <li><a href="{% url 'taskmanager:task_my_tasks' %}"><i class="fa fa-angle-double-right"></i>View my tasks</a></li>
-                        <li><a href="{% url 'taskmanager:task_create' %}"><i class="fa fa-angle-double-right"></i> Create Tasks</a></li> 
+                       	{% endif %}
+			 <li><a href="{% url 'taskmanager:task_my_tasks' %}"><i class="fa fa-angle-double-right"></i>View my tasks</a></li>
+                        <li><a href="{% url 'taskmanager:task_completed_tasks' %}"><i class="fa fa-angle-double-right"></i>Completed tasks</a></li>
+                        {% if request.user.is_superuser and request.user.is_staff %}
+			<li><a href="{% url 'taskmanager:task_create' %}"><i class="fa fa-angle-double-right"></i> Create Tasks</a></li> 
+			{% endif %}
                     </ul>
                 </li>
                 <li>
