@@ -1,0 +1,118 @@
+{% extends '_layout.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block navheader %}
+{% endblock %}
+ 
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            {% if create %}
+            KickStart Project
+            {% elif update %}
+            Edit Project
+            {% else %}
+            Rate Task
+            {% endif %}
+        </div>
+        <div class="card-body">
+            <hr/>
+                {% crispy form %}
+            
+        </div>
+    </div>    
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+
+<script>
+    function renewDatePickers() {
+        $('.datetimeinput').datetimepicker('destroy');
+        $(".datetimeinput").datetimepicker({format:'Y-m-d H:i'});
+    }
+
+    $(renewDatePickers);
+
+    // $(function() {
+    //     $('.form-row.inline.{{ form.prefix }}').formset({
+    //         prefix: '{{ form.prefix }}',
+    //         added: renewDatePickers // Event -- read inline docs
+    //     });
+    // })
+
+    $(function () {
+        $(".datetimeinput").datetimepicker({
+            format:'Y-m-d H:i',
+        });
+    });
+
+    $("#id_team").change(function(){
+            var url = "{% url 'taskmanager:ajax_load_members' %}"
+            var teamId = $(this).val();  
+
+            $.ajax({                          // initialize an ajax request
+            url:url,                        // set the url of the request
+            data:{
+                'team': teamId 
+            },
+            success: function (data){                          // data is the return of the specific maptype view
+                // console.log(data);
+                $("#id_assigned_to").html(data);
+            }
+            });
+    });
+
+    $("#id_team").change(function(){
+            var url = "{% url 'taskmanager:ajax_load_projects' %}"
+            var teamId = $(this).val();  
+
+            $.ajax({                          // initialize an ajax request
+            url:url,                        // set the url of the request
+            data:{
+                'teamset': teamId 
+            },
+            success: function (data){                          // data is the return of the specific maptype view
+                // console.log(data);
+                $("#id_assignment_typeset").html(data);                   // replace contents of maptype with data that came from the server
+            }
+            });
+    });
+    
+
+    jQuery('#id_assignment_typeset').on('change', (e) => {
+    // You can also do this with document.querySelector('')
+    var assignment_typeset=$("#id_assignment_typeset option:selected").text();
+    
+    if (assignment_typeset=='other') {
+        // console.log(assignment_typeset+1);
+        // document.getElementById("id_assignment_typeset").style.color = "green";
+        jQuery('#id_assignment_type').show();                        
+    } else {               
+        jQuery('#id_assignment_type').hide();
+    }
+    }); 
+    
+    let form_count=Number($("#id_sub_task_count").val());
+    console.log(form_count);
+
+    $("#add-another").click(function(){
+        form_count ++;
+
+        let element=$('<input type="text"/>');
+        element.attr('name','sub_task_'+form_count);
+        let elements=$('<input type="text"/>');
+        element.attr('name','member_assigned_sub_task_'+form_count);
+        $("#forms").append(element);
+        $("#forms").append(elements);
+
+        $("[name=sub_task_count]").val(form_count);
+    })
+</script>
+
+{% endblock %}
+

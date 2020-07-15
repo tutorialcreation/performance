@@ -1,0 +1,495 @@
+{% extends "_layout.html" %}
+
+{% block navheader %}
+{% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+
+<!-- {{team}} -->
+
+{% block content %}
+{% include "_modal.html" %}
+
+<!---start of container-->
+<div class="container-fluid"> 
+
+  <div class="row">
+    
+    <div class="col-lg-12"><!-- beginning of second div -->
+   
+    <div class="card">
+      <div class="card-header bg-primary text-white"><h5>{{team.name}}</h5></div>
+    </div> 
+    <hr>
+    {% for team in team.members.all %}
+    
+    <div id="teamMemberAccordion-{{forloop.counter}}"><!--beginning of team members accordion-->
+      <div class="card"><!--begninning of card-->
+        <div class="card-header" id="teamMember"><!--team member card header-->
+          <h5 class="mb-0">
+            <p class="pull-left text-primary"><strong><i class="fa fa-user"></i> {{team.username}}</strong></p>
+            <button class="btn btn-link pull-right" data-toggle="collapse" data-target="#collapseTeamMember-{{forloop.counter}}" aria-expanded="true" aria-controls="collapseTeamMember-{{forloop.counter}}">
+              <h5><i class="fa fa-plus-circle"></i></h5>
+            </button>
+          </h5>
+        </div><!--team member card header end-->
+    
+        <div id="collapseTeamMember-{{forloop.counter}}" class="collapse" aria-labelledby="teamMember" data-parent="#teamMemberAccordion-{{forloop.counter}}"><!--collapse body -->
+          <div class="card-body"><!--card body beginning-->
+              
+              <!---start of accordion-->
+              <div id="accordion"> 
+                <!---start of first card -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white" id="toAccept">
+                      <h3>
+                        <button class="btn btn-link badge badge-light pull-left" data-toggle="collapse" data-target="#collapseToAccept" aria-expanded="true" aria-controls="collapseToAccept">
+                        Tasks To Accept
+                        <i class="fa fa-caret-down"></i>
+                      </button>
+                        <p class="pull-right"><i class="fa fa-bell"></i> {{ tasks.count }} task(s) </p>
+                      </h3>
+                    </div>
+                    <!--- beginning of collapse -->
+                    <div id="collapseToAccept" class="collapse" aria-labelledby="toAccept" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>You have {{ tasks.count }} task(s) that are yet to be accepted!</p>
+                        {% if tasks %}
+                        <table id="acceptTask" class="table table-bordered table-striped table-hover">
+                          <thead><!--head of first table-->
+                          <tr class="bg-primary text-white">
+                            <th>Project Name</th>
+                            <th>Team</th>
+                            <th>Created By</th>
+                            <th>Client</th>
+                            <th>Project Coordinator</th>
+                            {% if not completed %}
+                              <th>Tasks</th>
+                              <th>Accept</th>
+                            {% else %}
+                              <th>Completed Date</th>
+                            {% endif %}
+                            <th>Actions</th>
+                          </tr>
+                          </thead><!-- end of head of first table -->
+                          <tbody><!--beginning of first table body-->
+                          {% for task in tasks %}
+                          {% for subtask in task.subtask.all %}
+                          {% if subtask.member_assigned.username == team.username and subtask.status == 'PLAN' %}
+                            <tr>
+                              <td><a href="{{ task.get_absolute_urls }}">{{ task.title }}</a></td>
+                              <td>
+                                {% if task.team %}
+                                  <a href={{ task.team.get_absolute_url }}>{{ task.team }}</a>
+                                {% else %}
+                                  ----
+                                {% endif %}
+                              </td>
+                              <td>{{ task.creator }}</td>
+                              <td>{{task.client_name}}</td>
+                              <td>
+                                <ul>
+                                  {% for u in task.assigned_to.all %}
+                                    <li>{{ u }}</li>
+                                  {% endfor %}
+                                </ul>
+                              </td>
+                              {% if not completed %}
+                              <td class="{% if task.is_overdated %}bg-danger text-white{% endif %}">
+                              <ul>
+                                {% if subtask.is_overdated  %}
+                                <li>
+                                  {{subtask.name}}&rarr;{{subtask.member_assigned}}&rarr;{{ subtask.task_due_date }} &lArr; extend deadline please
+                                </li>
+                                {% else %}
+                                <li>
+                                  {{subtask.name}}&rarr;{{subtask.member_assigned}}&rarr;{{ subtask.task_due_date }} &lArr; deadline
+                                </li>
+                                {% endif %}
+                                
+                              </ul> 
+                              </td>
+                                {% if request.user in task.assigned_to.all %}
+                                <td>
+                                  <a href="#" class="btn btn-sm btn-info">{{subtask.get_status_display}}</a>
+                                </td>
+                                {% else %}
+                                <td>
+                                  <a href="#" class="btn btn-sm btn-secondary" disabled>team's task</a>
+                                </td>
+                                {% endif %}
+                              {% else %}
+                                <td>{{ task.completed_date }}</td>
+                              {% endif %}
+                              <td><div class="btn-group">
+                                <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                                <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
+                              </div></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+                          </tbody><!-- end of first table body-->
+                        </table>
+                      {% endif %}
+                
+                    </div>
+                  </div><!-- end of first collapse -->
+                </div>
+                <!--end of first card -->
+                <!--- beginning of second card -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white" id="ongoingTasks">
+                      <h3>
+                        <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseOngoingTasks" aria-expanded="false" aria-controls="collapseOngoingTasks">
+                          Ongoing Tasks
+                        <i class="fa fa-caret-down"></i>
+                        </button>
+                        <p class="pull-right"><i class="fa fa-bell"></i> {{ tasks_inprogress.count }} task(s) </p>
+                      </h3>
+                    </div>
+                    <div id="collapseOngoingTasks" class="collapse" aria-labelledby="ongoingTasks" data-parent="#accordion"><!--- beginning of second collapse -->
+                    <div class="card-body">
+                      <p>{{tasks_inprogress}}</p>
+                      
+                      {% if tasks_inprogress %}
+                      <table id="ongoingTask" class="table table-bordered table-striped table-hover">
+                        <thead><!-- beginning of second table head -->
+                        <tr class="bg-primary text-white">
+                          <th>Project Name</th>
+                          <th>Tasks</th>
+                          <th>Team</th>
+                          <th>Created By</th>
+                          <th>Client</th>
+                          <th>Project Coordinator</th>
+                          {% if not completed %}
+                            <th>Due Date</th>
+                            <th>Submit</th>
+                          {% else %}
+                            <th>Completed Date</th>  
+                          {% endif %}
+                          <th>Revised Due Date</th>
+                          <th>Actions</th>
+                        </tr>
+                        </thead><!-- end of second table head -->
+                        <tbody><!--beginning of second table body -->
+                        {% for task in tasks_inprogress %}
+                        {% for subtask in task.subtask.all %}
+                        {% if subtask.member_assigned.username == team.username and subtask.status == 'PROG' %}
+                          <tr>
+                            <td><a href="{{ task.get_absolute_urls }}">{{ task.title }}</a></td>
+                            <td>
+                              <ul>
+                                  <li>{{ subtask.name }} &rarr; {{subtask.member_assigned }}</li>
+                              </ul>
+                            </td>
+                            <td>
+                              {% if task.team %}
+                                <a href={{ task.team.get_absolute_url }}>{{ task.team }}</a>
+                              {% else %}
+                                ----
+                              {% endif %}
+                            </td>
+                            <td>{{ task.creator }}</td>
+                            <td>{{task.client_name}}</td>
+                            <td>
+                              <ul>
+                                {% for u in task.assigned_to.all %}
+                                  <li>{{ u }}</li>
+                                {% endfor %}
+                              </ul>
+                            </td>
+                            {% if not completed %}
+                              <td class="{% if task.is_overdated %}bg-warning{% endif %}">{{ task.due_date }}</td>
+                              {% if task.status == 'REV' %}
+                              <td>
+                                <a href="#" class="btn btn-sm btn-danger"> <i class="fa fa-warning"></i>resubmitting</a>
+                              </td>
+                              {% else %}
+                              <td>
+                                <a href="#" class="btn btn-sm btn-warning">{{subtask.get_status_display}}</a>
+                              </td>
+                              {% endif %}
+                            {% else %}
+                              <td>{{ subtask.completed_date }}</td>
+                            {% endif %}
+                              <td>{{ subtask.completed_date }}</td>
+                              <td><div class="button-group">
+                                <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                                <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
+                              </div></td>
+                          </tr>
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                        </tbody><!-- end of second table body -->
+                      </table>
+                    {% endif %}      
+                    </div>
+                    </div><!-- end of second collapse -->
+                </div>
+                <!--end of second card-->
+
+                <!--- beginning of third card -->
+                <div class="card">
+                  <div class="card-header bg-primary text-white" id="completedTasks">
+                    <h3>
+                      <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseCompletedTasks" aria-expanded="false" aria-controls="collapseCompletedTasks">
+                        Completed Tasks
+                      <i class="fa fa-caret-down"></i>
+                      </button>
+                      <p class="pull-right"><i class="fa fa-bell"></i> {{ completed_tasks.count }} task(s) </p>
+                    </h3>      
+                  </div>
+                  <div id="collapseCompletedTasks" class="collapse" aria-labelledby="completedTasks" data-parent="#accordion"><!--- beginning of third collapse -->
+                  <div class="card-body">
+                    <p>You have completed {{ tasks.count }} task(s) and {{tasks.count}} task(s) have been approved and {{tasks.count}} task(s) have been reassigned to other individuals.</p>
+                    {% if completed_tasks %}
+                    <table id="completeTask" class="table table-bordered table-striped table-hover">
+                      <thead><!-- beginning of third table head -->
+                      <tr class="bg-primary text-white">
+                        <th>Project Name</th>
+                        <th>Tasks</th>
+                        <th>Team</th>
+                        <th>Created By</th>
+                        <th>Client</th>
+                        <th>Project Coordinator</th>
+                        <th>Completed Date</th>
+                        <th>Status</th>
+                      </tr>
+                      </thead><!-- beginning of third table head -->
+                      <tbody><!-- beginning of third table body -->
+                        {% for task in completed_or_approved_tasks%}
+                        
+                        {% for subtask in task.subtask.all %}
+                        {% if subtask.member_assigned.username == team.username and subtask.status == 'COMP' or subtask.status == 'APP'  or subtask.status == 'RET' %}
+                        <tr>
+                          <td><a href="{{ task.get_absolute_url }}">{{ task.title }}</a></td>
+                          <td>
+                            <ul>
+                                <li>{{ subtask.name }} &rarr; {{subtask.member_assigned }}</li>
+                              </ul>
+                            </td>
+                            <td>
+                              {% if task.team %}
+                              <a href={{ task.team.get_absolute_url }}>{{ task.team }}</a>
+                              {% else %}
+                              ----
+                              {% endif %}
+                            </td>
+                            <td>{{ task.creator }}</td>
+                            <td>{{task.client_name}}</td>
+                            <td>
+                              <ul>
+                                {% for u in task.assigned_to.all %}
+                                <li>{{ u }}</li>
+                                {% endfor %}
+                              </ul>
+                            </td>
+                            <td>{{ subtask.completed_date }}</td>
+                            <td class="badge badge-success"><i class="fa fa-check-circle"></i>{{ subtask.get_status_display }}</td>
+                          </tr>
+                          
+                          {% endif %}
+                          {% endfor %}
+                          {% endfor %}
+                      </tbody><!-- end of third table body -->
+                    </table>
+                  {% endif %}    
+                  </div>
+                  </div><!-- end of third collapse -->
+                </div>
+                <!-- end of third card -->
+
+                <!--- beginning of fourth card -->
+                <div class="card">
+                  <div class="card-header bg-primary text-white" id="toReview">
+                    <h3>
+                      <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseToReview" aria-expanded="false" aria-controls="collapseToReview">
+                        Tasks To Review
+                      <i class="fa fa-caret-down"></i>
+                      </button>
+                      <p class="pull-right"><i class="fa fa-bell"></i> {{ approved_tasks.count }} task(s) </p>
+                    </h3>      
+                  </div>
+                  <div id="collapseToReview" class="collapse" aria-labelledby="toReview" data-parent="#accordion"><!--- beginning of fourth collapse --> 
+                  <div class="card-body">
+                    <p>
+                      You have approved {{ tasks.count }} task(s) and {{tasks.count}} task(s) are waiting to be reviewed for returning for revision 
+                      and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
+                    </p>
+                    {% if completed_tasks %}
+                    <table id="taskReview" class="table table-bordered table-striped table-hover">
+                      <thead><!--beginning of fourth table head-->
+                      <tr class="bg-primary text-white">
+                        <th>Project Name</th>
+                        <th>Tasks</th>
+                        <th>Team</th>
+                        <th>Created By</th>
+                        <th>Client</th>
+                        <th>Project Coordinator</th>
+                        <th>Completed Date</th>
+                        <th>Approve/Return</th>
+                        <th>Actions</th>
+                        <th>Status</th>
+                      </tr>
+                      </thead><!--end of fourth table head-->
+                      <tbody><!-- beginning of fourth table body-->
+                      {% for task in completed_tasks %}
+                      {% for subtask in task.subtask.all %}
+                      {% if subtask.member_assigned.username == team.username  and subtask.status == 'COMP' or subtask.status == 'RET' %}
+                        <tr>
+                          <td><a href="{{ task.get_absolute_url }}">{{ task.title }}</a></td>
+                          <td>
+                            <ul>
+                                <li>{{ subtask.name }} &rarr; {{subtask.member_assigned }}</li>
+                            </ul>
+                          </td>
+                          <td>
+                            {% if task.team %}
+                              <a href={{ task.team.get_absolute_url }}>{{ task.team }}</a>
+                            {% else %}
+                              ----
+                            {% endif %}
+                          </td>
+                          <td>{{ task.creator }}</td>
+                          <td>{{task.client_name}}</td>
+                          <td>
+                            <ul>
+                              {% for u in task.assigned_to.all %}
+                                <li>{{ u }}</li>
+                              {% endfor %}
+                            </ul>
+                          </td>
+                          <td>{{ task.completed_date }}</td>
+                          <td>
+                            <button data-id="{% url 'taskmanager:subtask_rating' task.pk %}?subtask_id={{subtask.pk}}" class="rating btn btn-warning btn-sm"><i class="fa fa-check">approve</i></button>
+                            <a href="{% url 'taskmanager:task_mark_revision' task.pk %}?subtask_id={{subtask.pk}}" class="btn btn-sm btn-danger"> <i class="fa fa-close"></i> return</a>
+                          </td>
+                          <td><div class="button-group">
+                            <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                            <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
+                          </div></td>
+                          {% if task.status == 'RET' %}
+                          <td class="badge badge-warning"><i class="fa fa-exclamation-triangle"></i>{{task.get_status_display}}</td>
+                          {% elif task.status == 'COMP' %}
+                          <td class="badge badge-success">{{task.get_status_display}}</td>
+                          {% else %}
+                          <td class="badge badge-info">{{task.get_status_display}}</td>
+                          {% endif %}
+                        </tr>
+                      {% endif %}
+                      {% endfor %}
+                      {% endfor %}
+                      </tbody><!-- end of fourth table body-->
+                    </table>
+                  {% endif %}    
+                  </div>
+                  </div><!--- end of fourth collapse -->
+                </div>
+                <!--- end of fourth card -->
+                
+                
+                <!--- beginning of fifth card -->
+                <div class="card">
+                  <div class="card-header bg-primary text-white" id="projects">
+                    <h3>
+                      <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseProjects" aria-expanded="false" aria-controls="collapseToReview">
+                        Projects
+                      <i class="fa fa-caret-down"></i>
+                      </button>
+                      <p class="pull-right"><i class="fa fa-bell"></i> {{ approved_tasks.count }} task(s) </p>
+                    </h3>      
+                  </div>
+                  <div id="collapseProjects" class="collapse" aria-labelledby="toReview" data-parent="#accordion"><!--- beginning of fourth collapse --> 
+                  <div class="card-body">
+                    <p>
+                      You have approved {{ tasks.count }} task(s) and {{tasks.count}} task(s) are waiting to be reviewed for returning for revision 
+                      and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
+                    </p>
+                    {% if tasks %}
+                    <table id="taskReview" class="table table-bordered table-striped table-hover">
+                      <thead><!--beginning of fifth table head-->
+                      <tr class="bg-primary text-white">
+                        <th>Project Name</th>
+                        <th>Team</th>
+                        <th>Created By</th>
+                        <th>Client</th>
+                        <th>Project Coordinator</th>
+                        <th>Completed Date</th>
+                        <th>Status</th>
+                      </tr>
+                      </thead><!--end of fifth table head-->
+                      <tbody><!-- beginning of fifth table body-->
+                      {% for task in tasks %}
+                      {% for subtask in task.subtask.all %}
+                      {% if subtask.member_assigned.username == team.username and forloop.last %}
+                        <tr>
+                          <td><a href="{{ task.get_absolute_url }}">{{ task.title }}</a></td>
+                          <td>
+                            {% if task.team %}
+                              <a href={{ task.team.get_absolute_url }}>{{ task.team }}</a>
+                            {% else %}
+                              ----
+                            {% endif %}
+                          </td>
+                          <td>{{ task.creator }}</td>
+                          <td>{{task.client_name}}</td>
+                          <td>
+                            <ul>
+                              {% for u in task.assigned_to.all %}
+                                <li>{{ u }}</li>
+                              {% endfor %}
+                            </ul>
+                          </td>
+                          <td>{{ task.completed_date }}</td>
+                          <td>{{subtask.get_status_display}}</td>
+                        </tr>
+                      {% endif %}
+                      {% endfor %}
+                      {% endfor %}
+                      </tbody><!-- end of fifth table body-->
+                    </table>
+                  {% endif %}    
+                  </div>
+                  </div><!--- end of fifth collapse -->
+                </div>
+                <!--- end of fifth card -->
+
+
+              </div><!--- end of accordion-->
+
+          </div><!--card body ending-->
+        </div><!-- collapse body ending-->
+      </div><!--end of card-->
+    </div><!-- ending of team members accordion-->  
+    {% endfor %}
+    </div><!--end of second div-->
+  </div>
+
+
+  </div><!-- end of container -->
+
+{% endblock %}
+{% block extrascripts %}
+<script>
+  $(function () {
+      
+      // Update level buttons
+      $(".due_date").each(function () {
+        $(this).modalForm({formURL:$(this).data('id')});
+      });
+      $(".reassign").each(function () {
+        $(this).modalForm({formURL:$(this).data('id')});
+      });
+  });
+
+  $(function () {
+      
+      // Update level buttons
+      $(".rating").each(function () {
+        $(this).modalForm({formURL:$(this).data('id')});
+      });
+  });
+</script>
+{% endblock extrascripts %}

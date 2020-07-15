@@ -1,0 +1,41 @@
+{% extends '_layout.html' %}
+{% load crispy_forms_tags %}
+{% block navheader %}
+{% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="card">
+  <div class="card-header bg-primary text-white">
+    Edit Task
+  </div>
+  <div class="card-body">
+    <form method="post" class="form-horizontal" action="">
+      {% csrf_token %}
+
+        {% for field in form %}
+          
+            {% for error in field.errors %}
+              <div class="alert alert-danger">
+                {{ error }}
+              </div>
+            {% endfor %}
+
+            <b>{{ field.label_tag }}</b>
+            {{ field |as_crispy_field}}
+            {% if field.help_text %}
+              <span class="w3-small">
+                {{ field.help_text }}
+              </span>
+            {% endif %}
+          
+        {% endfor %}
+            <br>
+      <input type="submit" value="Save" class="btn btn-primary">
+    </form>
+  
+  </div>
+</div>    
+</div>
+  {% endblock %}

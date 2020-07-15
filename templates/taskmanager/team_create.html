@@ -1,0 +1,26 @@
+{% extends '_layout.html' %}
+
+{% block navheader %}
+{% include 'includes/navheader_employee_app.html' %}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        Team Create
+      </div>
+      <div class="card-body">
+        <form action="" method="post" class="w3-container">
+          {% csrf_token %}
+          <label>Team Name:</label>
+          <input type="text" name="team_name" class="form-control" placeholder="Enter name for team" required autofocus><br>
+          <label>Team Description : </label>
+          <textarea name="team_desc" rows="5" class="form-control" placeholder="Enter description of team"></textarea><br>
+          <input type="submit" class="btn btn-primary" value="Create Team">
+        </form>
+      </div>
+    </div>
+    
+  </div>
+{% endblock %}

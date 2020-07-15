@@ -1,0 +1,14 @@
+{% if load_members %}
+<option value="">---------</option>
+{% for member in members %}
+<option value="{{ member.pk }}">{{ member }}</option>
+{% endfor %}
+{% endif %}
+
+
+{% if load_projects %}
+<option value="">---------</option>
+{% for assignment_type in assignment_typeset %}
+<option value="{{ assignment_type.pk }}">{{ assignment_type }}</option>
+{% endfor %}
+{% endif %}

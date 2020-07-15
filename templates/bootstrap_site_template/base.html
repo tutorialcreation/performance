@@ -1,0 +1,79 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+</head>
+<body>
+    <style>
+        body{
+            background:aqua;
+        }
+        @media screen and (min-width:576px){
+            body{
+                background: red;
+            }
+        }
+        @media screen and(min-width:768px){
+            body{
+                background: blue;
+            }
+        }
+        @media screen and (min-width:992px){
+            body{
+                background: yellow;
+            }
+        }
+        @media screen and (min-width: 1200px){
+            body{
+                background: green;
+            }
+        }
+    </style>
+
+    
+    <div class="container">
+        <div class="row">
+            <div class="col bg-danger">
+                am a single column.
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col bg-info">am a single column</div>
+            <div class="col bg-warning">am a single column</div>
+            <div class="col bg-dark">am a single column</div>
+            <div class="col bg-secondary">am a single column</div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-7 col-md-10 col-lg-3 col-xl-9 bg-danger">am a single column</div>
+            <div class="col-sm-5 col-md-2  col-lg-9 col-xl-3 bg-info">am a single column</div>
+            <div class="col-sm-8 col-md-11 col-lg-7 col-xl-2 bg-dark">am a single column</div>
+            <div class="col-sm-4 col-md-1  col-lg-5 col-xl-10 bg-secondary">am a single dark</div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3 bg-danger">am three</div>
+            <div class="col-sm-6 bg-primary">am six</div>
+            <div class="col-sm-3 bg-warning">am three</div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 bg-danger">am half</div>
+            <div class="col-md-6 bg-info">am half</div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="bg-danger m-4">am </div>
+    </div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>

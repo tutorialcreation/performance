@@ -1,0 +1,45 @@
+#!/bin/bash 
+  
+NAME="performance_system"                                                                  # Name of the application 
+DJANGODIR=/srv/www/html/performance_system      # Django project directory 
+SOCKFILE=localhost:8484   # we will communicte using this unix socket 
+USER=root                                                                       # the user to run as 
+GROUP=root                                                                      # specifying port
+NUM_WORKERS=1                                                                   # how many worker processes should Gunicorn spawn 
+DJANGO_SETTINGS_MODULE=setup.settings                                         # which settings file should Django use 
+DJANGO_WSGI_MODULE=setup.wsgi                                                 # WSGI module name 
+  
+echo "Starting $NAME as `whoami`" 
+echo $SOCKFILE  
+# Activate the virtual environment 
+cd $DJANGODIR 
+#alias python3=python3.6
+#python3 -m pip install pipenv
+#pipenv install
+#pipenv shell
+
+source /root/.local/share/virtualenvs/performance_system-*/bin/activate 
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE 
+export PYTHONPATH=$DJANGODIR
+source .env
+#echo $SOCKFILE
+# Create the run directory if it doesn't exist 
+#RUNDIR=$(dirname $SOCKFILE) 
+#test -d $RUNDIR || mkdir -p $RUNDIR 
+  
+# Start your Django Unicorn 
+# Programs meant to be run under supervisor should not daemonize themselves (do not use --daemon) 
+#exec /srv/www/html/prmf_env/bin/gunicorn ${DJANGO_WSGI_MODULE}:application \ 
+ #--workers $NUM_WORKERS \ 
+ #--name $NAME \ 
+ #--user=$USER --group=$GROUP \ 
+ #--bind=$SOCKFILE\ 
+ #--log-level=debug \ 
+ #--log-file=- 
+gunicorn --bind 0.0.0.0:8484 setup.wsgi --reload --access-logfile '-' --workers 1 --timeout 90
+#echo $SOCKFILE
+
+
+
+
+
