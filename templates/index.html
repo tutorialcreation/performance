@@ -11,8 +11,37 @@
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
   <meta name="viewport" content="width=device-width" />
+
+  <!-- Custom fonts for this template-->
+  <link href="https://fonts.googleapis.com/css?family=Anton|Russo+One" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Asap&display=swap" rel="stylesheet">
+  <!--     Fonts and icons     -->
+  
+  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+  <!-- CSS only -->
+
+  <link href="{% static 'css/pe-icon-7-stroke.css' %}" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+  <!--    w3 css-->
+   <link rel = "stylesheet" href = "https://www.w3schools.com/lib/w3.css">
+  <link href="{% static 'taskmanager/w3.css' %}" rel="stylesheet"/>
+  <!-- Custom styles for this template -->
+  <!--  CSS for Demo Purpose, don't include it in your project     -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/starability/2.4.2/starability-minified/starability-all.min.css"/>
+  <!-- JS, Popper.js, and jQuery -->
+
+  <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="{% static 'admin_css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+  <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
+  
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
   <!-- Bootstrap core CSS     -->
-  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" />
   <link href="{% static 'css/pe-icon-7-stroke.css' %}" rel="stylesheet" />
 
 
@@ -30,10 +59,7 @@
     <style type="text/css">
        body{
           position: relative;
-          background:rgba(248, 151, 52, 1);
-          background:url("static/img/office-1.jpg");
-          background-size:cover;
-          opacity:0.6
+          opacity:1.0
 
         }
 
@@ -58,7 +84,7 @@
 
         h2{
           font-family: 'Alice', serif;
-          color: gold;
+          color: black;
           font-size: 4.9rem;
 
 
@@ -66,29 +92,14 @@
 
 
 
-        p{
-          font-variant: small-caps;
-          color: #cecece;
-
-        }
-
-        p span{
-          color: #a5a5a5;
-          font-weight: bold;
-        }
-
-        span.icon{
-          font-size: 15px;
-        }
-
         .content{
           position: relative;
-          height: 100vh;
+          height: 300px;
         }
 
         .sub-title{
         vertical-align: -webkit-baseline-middle;
-        font-size: 12px !important;
+        font-size: 22px !important;
         font-family: 'Luckiest Guy', cursive;
         }
 
@@ -111,71 +122,257 @@
           left: 0;
           right: 0;
         }
+        
+/* 
+        section {
+            padding: 60px 0;
+        } */
 
+        section .section-title {
+            text-align: center;
+            color: #007b5e;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+        }
+        #footer {
+            background: #007b5e !important;
+            padding: 60px 0;
+        }
+        #footer h5{
+          padding-left: 10px;
+            border-left: 3px solid #eeeeee;
+            padding-bottom: 6px;
+            margin-bottom: 20px;
+            color:#ffffff;
+        }
+        #footer a {
+            color: #ffffff;
+            text-decoration: none !important;
+            background-color: transparent;
+            -webkit-text-decoration-skip: objects;
+        }
+        #footer ul.social li{
+          padding: 3px 0;
+        }
+        #footer ul.social li a i {
+            margin-right: 5px;
+          font-size:25px;
+          -webkit-transition: .5s all ease;
+          -moz-transition: .5s all ease;
+          transition: .5s all ease;
+        }
+        #footer ul.social li:hover a i {
+          font-size:30px;
+          margin-top:-10px;
+        }
+        #footer ul.social li a,
+        #footer ul.quick-links li a{
+          color:#ffffff;
+        }
+        #footer ul.social li a:hover{
+          color:#eeeeee;
+        }
+        #footer ul.quick-links li{
+          padding: 3px 0;
+          -webkit-transition: .5s all ease;
+          -moz-transition: .5s all ease;
+          transition: .5s all ease;
+        }
+        #footer ul.quick-links li:hover{
+          padding: 3px 0;
+          margin-left:5px;
+          font-weight:700;
+        }
+        #footer ul.quick-links li a i{
+          margin-right: 5px;
+        }
+        #footer ul.quick-links li:hover a i {
+            font-weight: 700;
+        }
+
+        @media (max-width:767px){
+          #footer h5 {
+            padding-left: 0;
+            border-left: transparent;
+            padding-bottom: 0px;
+            margin-bottom: 10px;
+        }
+        }
+
+ 
     </style>
 
     <!--CONTENTS-->
  
     <section class="content">
             <!-- Navigation -->
-                <nav class="navbar navbar-default">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
                       <div class="container-fluid">
                         <!-- Brand and toggle get grouped for better mobile display -->
                         <div class="navbar-header">
-                          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                            <span class="sr-only"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                          </button>
-                          {% if request.user.is_authenticated %}
-                          <a class="navbar-brand" href="{% url 'dashboard:dashboard' %}">Actserv <span class="sub-title">HRM</span></a>
-                          {% else %}
-                          <a class="navbar-brand" href="/">Actserv <span>HRM</span></a>
-                          {% endif %}
+                          
+                          <a class="navbar-brand" href="https://www.actserv.co.ke/">
+                            <span>
+                            <img src="https://res.cloudinary.com/actserv/image/upload/v1598948226/media/images/actserv_logo_2_dccgki.png" alt="">
+                            </span>
+                            <span class="sub-title">PAMS</span></a>
                         </div>
-
-                        <!-- Collect the nav links, forms, and other content for toggling -->
-                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                          <ul class="nav navbar-nav">
-                            <li class=""><a href="http://www.Actservgroup.com/" target="_blank">Actserv site <span class="sr-only">(current)</span></a></li>
-                            <li><a href="http://webmail.Actservgroup.com/" target="_blank">Actserv mail</a></li>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                          <ul class="navbar-nav mr-auto">
+                            <li class="nav-item active">
+                              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link" href="#">Dashboard</a>
+                            </li>
+                            {% if request.user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                              </a>
+                              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">profile</a>
+                                <a class="dropdown-item" href="{% url 'accounts:logout' %}">logout</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#"></a>
+                              </div>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                              <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
+                            </li>
+                            {% endif %}
                           </ul>
-                          <ul class="nav navbar-nav navbar-right">
-                            <li><a href="{% url 'accounts:login' %}">Login</a></li>
-                          </ul>
-                        </div><!-- /.navbar-collapse -->
-                      </div><!-- /.container-fluid -->
-                </nav>
+                          </div>
+                      
+                      
+              </nav>
             <!-- /Naivagtion -->
 
-            <div class="container-fluid container-centered-items">
-                <section class="row">
-                  <section class="">
-                     <section class="col col-lg-12 text-center">
-                        <div class="center-me-please">
-                            <h2>Actserv EMPLOYEE MANAGEMENT SYSTEM</h2>
-                            <p>This Application helps Actserv employees view their <span>profile</span>,apply for <span>leave</span> and get notification on <span>birthdays</span> <span>tasks</span> <span class="icon">😍🎂😘😍 ...</span></p>
+            <div class="">
+                        <div class="text-center" >
+                            <h2 class="">Performance Management System</h2>
+                            <p class="text-dark">This Application helps Actserv employees view their <span>profile</span>,manage their <span>tasks</span> and get notification on <span>birthdays</span> and <span>tasks</span> <span class="icon">😍🎂😘😍 ...</span></p>
                             <a class="btn btn-lg btn-success" style="width:50%;text-decoration: none;color:white;" href="{% url 'accounts:login' %}"
                                        style="text-decoration: none;color:#444140;">
                                         login
                             </a><hr/>
-			    <a class="btn btn-lg btn-success" style="width:50%;text-decoration: none;color:white;" href="{% url 'taskmanager:signup' %}"
+			                      <a class="btn btn-lg btn-success" style="width:50%;text-decoration: none;color:white;" href="{% url 'taskmanager:signup' %}"
                                        style="text-decoration: none;color:#444140;">
                                         signup
                             </a>
 
                         </div>
-                     </section>
-                  </section>
+                  <hr>
+                <section id="services" class="container">
+                  <h2 class="display-4 text-center mt-5 mb-3">Performance Reviews</h2>
+                  
+                  <div class="row text-center">
+                     <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                           <img class="card-img-top" src="https://res.cloudinary.com/actserv/image/upload/v1598946403/media/images/team-success_four_j5dd6h.jpg" alt="Design">
+                           <div class="card-body">
+                              <h4 class="card-title">2018</h4>
+                              <p class="card-text">Pensions team have emerged as the best performing team this year with a score of .....</p>
+                           </div>
+                           <div class="card-footer py-4">
+                              <a href="#" class="btn btn-success">Read more &raquo;</a>
+                           </div>
+                        </div>
+                     </div>
+                     
+                     <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                           <img class="card-img-top" src="https://res.cloudinary.com/actserv/image/upload/v1598946300/media/images/team_success_one_p42lo7.jpg" alt="Development">
+                           <div class="card-body">
+                              <h4 class="card-title">2019</h4>
+                                 <p class="card-text">The team Tigers has astonised everyone through their record breaking scores of ....</p>
+                           </div>
+                           <div class="card-footer py-4">
+                              <a href="#" class="btn btn-success">Read more &raquo;</a>
+                           </div>
+                        </div>
+                     </div>
+                     
+                     <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                           <img class="card-img-top" src="https://res.cloudinary.com/actserv/image/upload/v1598946301/media/images/team_success_two_ay2ggg.jpg" alt="Analytics">
+                           <div class="card-body">
+                              <h4 class="card-title">2020</h4>
+                              <p class="card-text">This is more astonishing than you could ever imagine. The IT team was able to breaking
+                                create a record that has never in history been heard of .....
+                              </p>
+                           </div>
+                           <div class="card-footer py-4">
+                              <a href="#" class="btn btn-success">Read more&raquo;</a>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+
+               <section class="" id="footer">
+                <div class="container">
+                  <div class="row text-center text-xs-center text-sm-left text-md-left">
+                    <div class="col-xs-12 col-sm-4 col-md-4">
+                      <h5>Quick links</h5>
+                      <ul class="list-unstyled quick-links">
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Home</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>About</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                      </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-4">
+                      <h5>Quick links</h5>
+                      <ul class="list-unstyled quick-links">
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Home</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>About</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                      </ul>
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-md-4">
+                      <h5>Quick links</h5>
+                      <ul class="list-unstyled quick-links">
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Home</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>About</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>FAQ</a></li>
+                        <li><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-angle-double-right"></i>Get Started</a></li>
+                        <li><a href="https://wwwe.sunlimetech.com" title="Design and developed by"><i class="fa fa-angle-double-right"></i>Actserv IT</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-5">
+                      <ul class="list-unstyled list-inline social text-center">
+                        <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-facebook"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-twitter"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-instagram"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02"><i class="fa fa-google-plus"></i></a></li>
+                        <li class="list-inline-item"><a href="https://www.fiverr.com/share/qb8D02" target="_blank"><i class="fa fa-envelope"></i></a></li>
+                      </ul>
+                    </div>
+                    <hr>
+                  </div>	
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
+                      
+                      <p class="h6">© All right Reversed.<a class="text-green ml-2" href="https://www.sunlimetech.com" target="_blank">Actserv IT</a></p>
+                    </div>
+                    <hr>
+                  </div>	
+                </div>
               </section>
+            
             </div>
+
      </section> <!-- /content -->
     <div>
        {% if request.user.is_authenticated %}
                     <p style="position: absolute;bottom: 0;"><a href="{{request.META.HTTP_REFERER|escape}}" class="back-link" title="back to previous page"><i class="pe-7s-back-2"></i></a></p>
        {% endif %}
     </div>
+
 
 </body>
 

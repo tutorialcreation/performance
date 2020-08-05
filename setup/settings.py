@@ -128,7 +128,7 @@ DATABASES = {
        'PASSWORD': os.getenv('DB_PASSWORD', ''),
        'HOST': os.getenv('DB_HOST', ''),
        'USER': os.getenv('DB_USER', ''),
-       'PORT': '5432',
+       'PORT': os.getenv('DB_PORT', 5433),
     }
 }
 
@@ -191,7 +191,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 # STATIC FILES WILL BE SERVED FROM STATIC_CDN WHEN WE ARE LIVE - OUT SIDE OF PROJECT
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # THIS KEEPS THE PROJECT FILES - CSS/JS/IMAGES/FONTS
 

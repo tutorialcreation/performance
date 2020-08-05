@@ -4,9 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
 
 [packages]
-django = "*"
+django = "==3.0"
 django-bootstrap3-multidatepicker = "*"
 django-bootstrap-modal-forms = "*"
 django-bootstrap3 = "*"
@@ -23,7 +24,6 @@ phonenumbers = "*"
 pandas = "*"
 numpy = "*"
 sqlalchemy = "*"
-django-filters = "*"
 django-filter = "*"
 redis = "*"
 reportlab = "*"
@@ -33,6 +33,9 @@ celery = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 django-allauth = "*"
+playsound = "*"
+matplotlib = "==3.1.2"
+mplcursors = "*"
 
 [requires]
 python_version = "3.6"

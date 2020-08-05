@@ -50,6 +50,8 @@ from taskmanager.forms.taskforms import (
 )
 from django.urls import reverse, reverse_lazy
 
+
+
 class TaskCreate(CreateView):
     '''
     doc strings should be in every function
@@ -210,24 +212,25 @@ class Rating(BSModalUpdateView):
 
         return redirect('taskmanager:task_my_tasks')
 
-class SubTaskRating(BSModalUpdateView):
+class SubTaskRating(UpdateView):
     # specify the model you want to use 
-    model = SubTask 
+    model = Task 
     template_name = 'taskmanager/task_create-edit.html'
     form_class=SubTaskRatingForm
     success_message='You have succesfully rated this task.'
   
-    success_url = reverse_lazy('taskmanager:task_my_tasks')
+    success_url = None
 
     def post(self, request, *args, **kwargs):
         # import pdb;pdb.set_trace()
         form = self.form_class(request.POST)
         # if form.is_valid():
-        task_id=request.GET.get('task_id')
-        task = get_object_or_404(Task, id=task_id)
-        subtask=task.subtask.get(pk=kwargs.get('pk'))
+        subtask_id=request.GET.get('subtask_id')
         # import pdb; pdb.set_trace()
+        task = get_object_or_404(Task, id=kwargs.get('pk'))
+        subtask=task.subtask.get(pk=subtask_id)
         if task.assigned_to.get(username=request.user.username):
+            # import pdb;pdb.set_trace()
             if subtask.status == 'COMP' or subtask.status == 'RET':
                 subtask.status = 'APP'
                 subtask.approved_date=datetime.datetime.today()
@@ -236,7 +239,7 @@ class SubTaskRating(BSModalUpdateView):
                 subtask.save()
                 messages.success(request, "The task is marked as Approved successfully!")
                 # After marking task as completed, redirect user to that task with success message
-                return redirect('taskmanager:task_my_tasks')
+                return redirect(reverse('taskmanager:team_detail',kwargs={'team_id':task.team_id}))
             else:
                 raise PermissionDenied
         else:
@@ -244,7 +247,7 @@ class SubTaskRating(BSModalUpdateView):
 
             # return HttpResponseRedirect('/success/')
 
-        return redirect('taskmanager:task_my_tasks')
+        return redirect(reverse('taskmanager:team_detail',kwargs={'team_id':task.team_id}))
     
 
 
@@ -388,14 +391,17 @@ def tasks(request):
     """
     context={}
     context['user'] = request.user
-    context['tasks'] = Task.objects.filter(subtask__status="PLAN")
-    context['completed_tasks'] = Task.objects.filter(subtask__status="COMP")
-    context['resubmitted_tasks'] = Task.objects.filter(subtask__status="RET")
-    context['revised_tasks'] = Task.objects.filter(subtask__status="REV")
-    context['approved_tasks'] = Task.objects.filter(subtask__status="APP")
-    context['tasks_inprogress'] = Task.objects.filter(subtask__status="PROG")
-    context['completed_tasks']=[*context['completed_tasks'],*context['resubmitted_tasks']]
-    context['completed_or_approved_tasks'] = [*context['completed_tasks'],*context['approved_tasks'],*context['revised_tasks']]
+    context['tasks'] = SubTask.objects.filter(Q(status="PLAN") & Q(member_assigned=request.user) )
+    context['completed_tasks'] = SubTask.objects.filter(Q(status="COMP") & Q(member_assigned=request.user))
+    context['resubmitted_tasks'] = SubTask.objects.filter(Q(status="RET") & Q(member_assigned=request.user))
+    context['revised_tasks'] = SubTask.objects.filter(Q(status="REV") & Q(member_assigned=request.user))
+    context['approved_tasks'] = SubTask.objects.filter(Q(status="APP") & Q(member_assigned=request.user))
+    context['pending_approval'] = SubTask.objects.filter(Q(status="PA") & Q(member_assigned=request.user))
+    context['tasks_inprogress'] = SubTask.objects.filter(Q(status="PROG") & Q(member_assigned=request.user))
+    context['taskset'] = Task.objects.filter(Q(assigned_to=request.user))
+    context['completed_tasks']=[*context['completed_tasks'],*context['resubmitted_tasks'],*context['pending_approval']]
+    context['completed_or_approved_tasks'] = [*context['completed_tasks'],*context['approved_tasks'],
+    *context['revised_tasks'],]
     context['tasks_inprogress']=[*context['tasks_inprogress'],*context['revised_tasks']]
     return render(
         request,
@@ -419,6 +425,7 @@ def team_tasks(request,team_id):
     context['resubmitted_tasks'] = context['team'].task_set.filter(subtask__status="RET")
     context['revised_tasks'] = context['team'].task_set.filter(subtask__status="REV")
     context['approved_tasks'] =context['team'].task_set.filter(subtask__status="APP")
+
     # import pdb;pdb.set_trace()
     context['tasks_inprogress'] =context['team'].task_set.filter(subtask__status="PROG")
     context['completed_tasks']=[*context['completed_tasks'],*context['resubmitted_tasks']]
@@ -459,6 +466,7 @@ def task_detail(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtasks=task.subtask.all()
     my_subtasks=task.subtask.filter(member_assigned=request.user)
+    
     # task_review = Task.objects.get(status='COMP').annotate(avg_review=Round(Avg('rating')))
     if request.user == task.creator or request.user in task.assigned_to.all():
         allowed = True
@@ -489,19 +497,27 @@ def task_accept(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtask_id=request.GET.get('subtask_id')
     subtask=task.subtask.get(pk=subtask_id)
-    if request.user in task.assigned_to.all():
+    if request.user in task.team.members.all():
         # import pdb;pdb.set_trace()
         if subtask.status == 'PLAN':
             subtask.status = 'PROG'
+            task.status = 'PROG'
             subtask.accepted_date = datetime.date.today()
             subtask.accepted_by = request.user
             subtask.save()
+            task.save()
             messages.success(request, "The task has been marked as ongoing successfully!")
             # After marking task as In-Progress, redirect user to that task with success message
             return redirect('taskmanager:task_my_tasks')
         else:
             raise PermissionDenied
     else:
+        if subtask.status == 'PLAN':
+            subtask.status = 'PA'
+            subtask.accepted_by=request.user
+            subtask.save()
+            messages.success(request,"The task has been marked as pending approval successfully")
+            return redirect('taskmanager:task_my_tasks')
         raise PermissionDenied
 
 @login_required
@@ -513,7 +529,7 @@ def task_resubmit(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtask_id=request.GET.get('subtask_id')
     subtask=task.subtask.get(pk=subtask_id)
-    if request.user in task.assigned_to.all():
+    if request.user in task.team.members.all():
         if subtask.status == 'REV':
             subtask.status = 'RES'
             subtask.accepted_date = datetime.date.today()
@@ -538,8 +554,14 @@ def task_mark_completed(request, task_id):
     # subtask=task.subtask.get(if)
     subtask_id=request.GET.get('subtask_id')
     subtask=task.subtask.get(pk=subtask_id)
-    if request.user == task.creator or request.user in task.assigned_to.all():
-        if subtask.status == 'PROG':
+    # subtasks_completed=task.subtask.filter(status='COMP').count()
+    # subtasks_total=task.subtask.all()
+
+    if request.user == task.creator or request.user in task.team.members.all():
+        if subtask.status == 'PROG' or task.status == 'PROG':
+            if task.task_count == 100:
+                task.status='COMP'
+                task.save()
             subtask.status = 'COMP'
             subtask.completed_date = datetime.date.today()
             subtask.save()
@@ -567,7 +589,7 @@ def task_mark_approved(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtask_id=request.GET.get('subtask_id')
     subtask=task.subtask.get(pk=subtask_id)
-    if request.user == task.creator or request.user in task.assigned_to.all():
+    if request.user == task.creator or request.user in task.team.members.all():
         if subtask.status == 'COMP':
             subtask.status = 'APP'
             subtask.approved_date = datetime.date.today()
@@ -589,6 +611,23 @@ def task_mark_approved(request, task_id):
 
 @login_required
 @require_http_methods(["GET"])
+def task_mark_pending_approved(request,task_id):
+    task=get_object_or_404(Task,id=task_id)
+    subtask_id=request.GET.get('subtask_id')
+    subtask=task.subtask.get(pk=subtask_id)
+    if request.user:
+        if subtask.status == 'PA':
+            subtask.status = 'PROG'
+            subtask.save()
+            messages.success(request,'The task has been approved you can begin working on the task.')
+            return redirect('taskmanager:task_my_tasks')
+        else:
+            raise PermissionDenied
+    else:
+        raise PermissionDenied
+
+@login_required
+@require_http_methods(["GET"])
 def task_mark_revision(request, task_id):
     """
     Only task creator and assigned users can mark task as Completed.
@@ -596,7 +635,7 @@ def task_mark_revision(request, task_id):
     task = get_object_or_404(Task, id=task_id)
     subtask_id=request.GET.get('subtask_id')
     subtask=task.subtask.get(pk=subtask_id)
-    if request.user == task.creator or request.user in task.assigned_to.all():
+    if request.user == task.creator or request.user in task.team.members.all():
         if subtask.status == 'PROG' or subtask.status=='COMP':
             subtask.status = 'REV'
             subtask.completed_date = datetime.date.today()
@@ -617,7 +656,7 @@ def task_comment(request, task_id):
     Only task creator, assigned users and members of task's team can comment on task.
     """
     task = get_object_or_404(Task, id=task_id)
-    if request.user == task.creator or request.user in task.assigned_to.all():
+    if request.user == task.creator or request.user:
         allowed = True
     elif task.team:
         if request.user in task.team.members.all():

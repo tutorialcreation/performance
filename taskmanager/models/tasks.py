@@ -62,10 +62,11 @@ class Task(models.Model):
         (5,'5')
     ]
     STATUS_CHOICES = (
-        ('PLAN', 'To Accept'),
+        ('PLAN', 'Begin'),
         ('PROG', 'On going'),
         ('COMP', 'Completed'),
         ('RES',  'Resubmit'),
+        ('PA',   'Pending Approval'),
         ('APP',  'Approved'),
         ('REV',  'Revise'),
         ('RET',  'Resubmitted'),
@@ -113,6 +114,31 @@ class Task(models.Model):
             deadline_score=convert_to_seconds(approved_delta)/convert_to_seconds(deadline_delta)
             return round(deadline_score,3)
 
+    @property
+    def task_resubmission_score(self):
+        resubmitted_tasks=TaskAnalysis.objects.filter(Q(resubmits='RES') & Q(task__creator=self.creator)).count()
+        total_tasks=Task.objects.filter(creator=self.creator).count()
+        resubmission_score=(1-(resubmitted_tasks/total_tasks))
+        return round(resubmission_score,3)
+
+
+    @property
+    def task_deadline_reset_score(self):
+        reset_tasks=TaskAnalysis.objects.filter(~Q(resubmits='RES') & Q(task__creator=self.creator)).count()
+        total_tasks=Task.objects.filter(creator=self.creator).count()
+        deadline_reset_score=(1-(reset_tasks/total_tasks))
+        return round(deadline_reset_score,3)
+
+
+    @property
+    def task_count(self):
+        completed_tasks=self.subtask.filter(status='COMP').count()
+        total_tasks=self.subtask.all().count()
+        if completed_tasks == 0 or total_tasks == 0:
+            rate=0
+        else:
+            rate = completed_tasks/total_tasks
+        return round(rate * 100)
 
 
     # Has due date for an instance of this object passed?
@@ -140,6 +166,7 @@ class SubTask(models.Model):
         ('PROG', 'On going'),
         ('COMP', 'Completed'),
         ('RES',  'Resubmit'),
+        ('PA',   'Pending Approval'),
         ('APP',  'Approved'),
         ('REV',  'Revise'),
         ('RET',  'Resubmitted'),
@@ -168,16 +195,64 @@ class SubTask(models.Model):
     def __str__(self):
         return self.name
 
-    
+
 
     @property
     def subtask_deadline_score(self):
-        approved_delta=relativedelta(self.date_accepted,self.approved_date)
         deadline_delta=relativedelta(self.date_accepted,self.task_due_date)
+        approved_delta=relativedelta(self.date_accepted,self.approved_date)
         if deadline_delta and approved_delta:
-            deadline_score=convert_to_seconds(approved_delta)/convert_to_seconds(deadline_delta)
-            return round(deadline_score,3)
+            deadline_score=convert_to_seconds(deadline_delta)/convert_to_seconds(approved_delta)
+            return round((1/deadline_score),3)
 
+    @property
+    def subtask_planning_score(self):
+        approved_delta=relativedelta(self.task_due_date,self.approved_date)
+        deadline_delta=relativedelta(self.task_due_date,self.date_accepted)
+        if deadline_delta and approved_delta:
+            planning_score=convert_to_seconds(approved_delta)/convert_to_seconds(deadline_delta)
+            return round((1-planning_score),3)
+
+
+
+    @property
+    def subtask_rate(self):
+        completed_tasks=SubTask.objects.filter(Q(status='COMP') & Q(member_assigned=self.member_assigned)).count()
+        total_tasks=SubTask.objects.filter(Q(member_assigned=self.member_assigned)).count()
+        # import pdb; pdb.set_trace()
+        if completed_tasks == 0 or total_tasks == 0:
+            rate=0
+        else:
+            rate = completed_tasks/total_tasks
+        return round(rate * 100)
+
+    @property
+    def subtask_resubmission_score(self):
+        resubmitted_tasks=SubTaskAnalysis.objects.filter(Q(resubmits='RES') & Q(subtask__member_assigned=self.member_assigned)).count()
+        total_tasks=SubTask.objects.filter(member_assigned=self.member_assigned).count()
+        resubmission_score=(1-(resubmitted_tasks/total_tasks))
+        return round(resubmission_score,3)
+
+
+    @property
+    def subtask_deadline_reset_score(self):
+        reset_tasks=SubTaskAnalysis.objects.filter(~Q(resubmits='RES') & Q(subtask__member_assigned=self.member_assigned)).count()
+        total_tasks=SubTask.objects.filter(member_assigned=self.member_assigned).count()
+        deadline_reset_score=(1-(reset_tasks/total_tasks))
+        return round(deadline_reset_score,3)
+
+    
+
+    @property
+    def pending_tasks(self):
+        completed_tasks=SubTask.objects.filter(Q(status='COMP') & Q(member_assigned=self.member_assigned)).count()
+        total_tasks=SubTask.objects.filter(Q(member_assigned=self.member_assigned)).count()
+        # import pdb; pdb.set_trace()
+        if completed_tasks == 0 or total_tasks == 0:
+            pending=0
+        else:
+            pending = total_tasks - completed_tasks
+        return pending
 
 
     def is_overdated(self):

@@ -190,7 +190,7 @@ class SubTaskRatingForm(forms.ModelForm):
         fields = ('rating','content',)
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        # self.request = kwargs.pop('request', None)
         super(SubTaskRatingForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
@@ -333,6 +333,7 @@ class SignUpForm(forms.ModelForm):
 
 
 class DateRangeInput(forms.Form):
-    date_range_picker=forms.CharField(label='Select Date Range',max_length=1024)
+    date_range_picker=forms.CharField(label='Select Date Range',max_length=1024,required=False)
+    multiple_date_picker=forms.CharField(label='Select Multiple Date Range',required=False)
 
     
