@@ -1,0 +1,112 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load widget_tweaks %}
+{% block navheader %}
+{% endblock %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+ 
+{% block content %}
+<style>
+    ul li:hover{ background:white;}
+    /*ul li span:hover ul{ display: none;}
+    ul li ul li:last-child:hover .itam-2{display: block;}*/
+
+</style>
+
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        {% if create %}
+        Create Project
+        {% elif update %}
+        Edit Project
+        {% elif revision %}
+        Return Task for revision
+        {% elif bidding %}
+        Bid Analyzer
+        {% elif invoice %}
+        Request for invoice
+        {% else %}
+        Rate Task
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <hr/>
+            {% crispy form %}
+        
+    </div>
+</div>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
+
+<!-- 
+<script
+  src="https://code.jquery.com/jquery-3.5.1.min.js"
+  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+  crossorigin="anonymous"></script> -->
+
+<script>
+    
+    $(function () {
+      for(var counter=0; counter<10; counter++){
+        $("#id_subtask-"+counter+"-task_due_date").datepicker({
+            format:'yyyy-mm-dd'
+        });
+      }  
+    });
+
+    $("#id_team").change(function(){
+            var url = "{% url 'taskmanager:ajax_load_members' %}"
+            var teamId = $(this).val();  
+
+            $.ajax({                          // initialize an ajax request
+            url:url,                        // set the url of the request
+            data:{
+                'team': teamId 
+            },
+            
+            success: function (data){
+                console.log(data);                               // data is the return of the specific maptype view
+                $("#id_assigned_to").html(data);
+                // $("#id_assignment_typeset").html(data);                   // replace contents of maptype with data that came from the server
+            //console.log("passed");
+            }
+            });
+    });
+    
+
+    jQuery('#id_assignment_typeset').on('change', (e) => {
+    // You can also do this with document.querySelector('')
+    var assignment_typeset=$("#id_assignment_typeset option:selected").text();
+    console.log(assignment_typeset);
+    if (assignment_typeset=='other') {
+        // console.log(assignment_typeset+1);
+        // document.getElementById("id_assignment_typeset").style.color = "green";
+        jQuery('#id_assignment_type').show();                        
+    } else {               
+        // console.log(assignment_typeset-1);        
+        jQuery('#id_assignment_type').hide();
+    }
+    }); 
+    
+    let form_count=Number($("#id_sub_task_count").val());
+    console.log(form_count);
+
+    $("#add-another").click(function(){
+        // e.preventDefault();
+        form_count ++;
+
+        let element=$('<input type="text"/>');
+        element.attr('name','sub_task_'+form_count);
+        let elements=$('<input type="text"/>');
+        element.attr('name','member_assigned_sub_task_'+form_count);
+        $("#forms").append(element);
+        $("#forms").append(elements);
+
+        $("[name=sub_task_count]").val(form_count);
+    })
+</script>
+
+{% endblock %}
+

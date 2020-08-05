@@ -1,5 +1,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
+{% load notifications_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,8 +19,8 @@
   <link href="https://fonts.googleapis.com/css?family=Asap&display=swap" rel="stylesheet">
   <!--     Fonts and icons     -->
   
-  <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-  <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href='https://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
   <!-- CSS only -->
 
   <link href="{% static 'css/pe-icon-7-stroke.css' %}" rel="stylesheet"/>
@@ -36,20 +37,21 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
   <!-- Custom styles for this template-->
-  <link href="{% static 'admin_css/sb-admin-2.min.css' %}" rel="stylesheet">
+  <link href="{% static 'admin_css/sb-admin-2.css' %}" rel="stylesheet">
 
   <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css">
   
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
 </head>
 
 <body id="page-top">
-
+  
   <!-- Page Wrapper -->
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
@@ -72,6 +74,15 @@
       </div>
 
       <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link" href="/task-master/">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+
+     
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
           <i class="fas fa-fw fa-cog"></i>
@@ -101,6 +112,73 @@
             {% for team in teamset %}
             <a class="collapse-item" href="{{ team.get_absolute_url }}">{{team.name}}</a>
             <a class="collapse-item" href="{{ team.get_absolute_urls }}">{{team.name}} &rarr; <i class="fa fa-plus">Add</i></a>
+            {% endfor %}
+          </div>
+        </div>
+      </li>
+      {% endif %}
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseClients" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-bar-chart"></i>
+          <span>Project Stats</span>
+        </a>
+        <div id="collapseClients" class="collapse" aria-labelledby="headingClients" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="ml-2"> <i class="fa fa-bar-chart"></i></h6>
+            <a class="collapse-item" href="{% url 'taskmanager:task_source' %}">Project Sources</a>
+          </div>
+        </div>
+      </li>
+
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePersonalScheduler" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-clock"></i>
+          <span>Personal Scheduler</span>
+        </a>
+        <div id="collapsePersonalScheduler" class="collapse" aria-labelledby="headingPersonalScheduler" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="ml-2"> <i class="fa fa-clock"></i></h6>
+            <a class="collapse-item" href="{% url 'taskmanager:task_source' %}">To Dos</a>
+            <a class="collapse-item" href="#">Events</a>
+            <a class="collapse-item" href="#">News</a>
+            <a class="collapse-item" href="#">Timeline</a>
+            <a class="collapse-item" href="#">Goal Plan</a>
+          </div>
+        </div>
+      </li>
+
+      {% if request.user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCRM" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-phone"></i>
+          <span>CRM Component</span>
+        </a>
+        <div id="collapseCRM" class="collapse" aria-labelledby="headingCRM" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="ml-2"> <i class="fa fa-phone"></i></h6>
+            <a class="collapse-item" href="{% url 'crm:client_create' %}">Add Clients</a>
+            <a class="collapse-item" href="{% url 'crm:contact_create' %}">Add Contact Persons</a>
+			<a class="collapse-item" href="{% url 'crm:communications' %}">Communications</a>
+          </div>
+        </div>
+      </li>
+      {% endif %}
+
+
+      {% if request.user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLeaves" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-hand-o-right"></i>
+          <span>Leave</span>
+        </a>
+        <div id="collapseLeaves" class="collapse" aria-labelledby="headingLeaves" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="ml-2"> <i class="fa fa-hand-o-right"></i></h6>
+            <a class="collapse-item" href="{% url 'dashboard:createleave' %}">Apply for Leave</a>
+            {% for object in leaveset %}
+            <a class="collapse-item" href="{% url 'dashboard:userleaveview' object.pk %}">View Leave for {{object.user}}</a>
             {% endfor %}
           </div>
         </div>
@@ -152,13 +230,14 @@
               </div>
             </li>
 
-            
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
+              
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{request.user.username}}</span>
                 <i class="fa fa-user"></i>
               </a>
+              
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 
@@ -177,16 +256,28 @@
           </ul>
 
         </nav>
-        <ol class='breadcrumb'>
-          <li class="nav-item active"><a href="/dashboard/welcome/" class="nav-link"><i class="fa fa-home"></i> &larr; go home</a></li>
-        </ol>
+        <ul class="breadcrumb">
+          <li class="dropdown">
+            {% notifications_unread  as unread_count %}
+            {% if unread_count %}
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <i class="fa fa-bell"></i>({{unread_count}})<b class="caret"></b>
+              </a>
+            {% endif %}
+            {% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+            
+              <ul class="dropdown-menu" id="notify">
+                 <p><li><a href="/task-master/my-tasks/" id="mark_read"> {% live_notify_list %}</a></li></p> 
+              </ul>
+          </li>
+        </ul>
         <!-- End of Topbar -->
         {% block content %}
         <!-- Begin Page Content -->
         <div class="container-fluid">
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <h1 class="h3 mb-0 text-gray-800">Dashboards</h1>
             <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
           </div>
           
@@ -203,13 +294,13 @@
            <div class="row">
 
             <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
+            <!-- <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Bonus Rate</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">80%</div>
                     </div>
                     <div class="col-auto">
                       <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -217,7 +308,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <!-- Earnings (Monthly) Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
@@ -225,11 +316,15 @@
                 <div class="card-body">
                   <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Team</div>
+                      {% for team in teamset %}
+                      {% if request.user in team.members.all %}
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{team.name}}</div>
+                      {% endif %}
+                      {% endfor %}
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                      <i class="fas fa-users fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -244,14 +339,18 @@
                     <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
                       <div class="row no-gutters align-items-center">
+                        {% for subtask in subtasks %}
+                        {% if forloop.last %}
                         <div class="col-auto">
-                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                          <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{subtask.subtask_rate}} %  </div>
                         </div>
                         <div class="col">
                           <div class="progress progress-sm mr-2">
-                            <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress-bar bg-info" role="progressbar" style="width: {{subtask.subtask_rate}}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                           </div>
                         </div>
+                        {% endif %}
+                        {% endfor %}
                       </div>
                     </div>
                     <div class="col-auto">
@@ -261,159 +360,117 @@
                 </div>
               </div>
             </div>
-
+            
             <!-- Pending Requests Card Example -->
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                    </div>
+              <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                  {% for subtask in subtasks %}
+                  {% if forloop.last %}
+                  <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Tasks</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{subtask.pending_tasks}}</div>
+                  </div>
+                  {% endif %}
+                  {% endfor %}
                     <div class="col-auto">
                       <i class="fas fa-comments fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
+                  
               </div>
             </div>
           </div>
+          <!--beginning of graphs-->
+          <div class="row">
+            <div class="col-12">
+              <form id="range_form" method="POST" data-ranges-url="{% url 'taskmanager:index' %}" novalidate>
+                {% csrf_token %}
+                {% if request.user.is_superuser %}
+                <label for="id_teamset">Team:</label>
+                <select name="teamset" id="id_teamset" class="form-control">
+                  {% for team in teamset %}
+                    <option value="{{team.name}}">{{team.name}}</option>
+                  {% endfor %}
+                </select>
+                {% endif %}
+                {% if request.user.is_staff  and not request.user.is_superuser %}
+                <label for="id_team_member">Team Member:</label>
+                <select name="team_member" id="id_team_member" class="form-control">
+                  {% for member in all_members %}
+                    <option value="{{member.username}}">{{member.username}}</option>
+                  {% endfor %}
+                </select>
+                {% endif %}
+                {{form|crispy}}
+                <input id="submit_range" type="submit" value="submit" class="btn btn-sm btn-primary">
+            </form>
+            </div>
+            <div class="col-sm-4 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <canvas id="myChart" data-url="{% url 'taskmanager:chart_deadline' %}" class='chart_data'></canvas>                
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <canvas id="myChart3" data-url="{% url 'taskmanager:chart_quality' %}" class='chart_data'></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-body">
+                  <canvas id="myChart4" data-url="{% url 'taskmanager:chart_planning' %}" class='chart_data'></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <canvas id="myChart2" data-url="{% url 'taskmanager:chart_reset' %}" class='chart_data'></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <canvas id="myChart1" data-url="{% url 'taskmanager:chart_resubmission' %}" class='chart_data'></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--end of graphs-->
           <!--beginning of first row-->
           <div class="row">
-           
-
-
-          <div class="col-lg-6 mb-4"><!--beginning of second div-->
-
-            <!-- Work Rates -->
-            <div class="card shadow mb-4"><!--beginning of reports card-->
-              <div class="card-header py-3"><!--start of reports card header-->
-                <ul class="nav nav-tabs">
-                  <li class="nav-item">
-                    <a class="nav-link m-0 active font-weight-bold text-primary" data-toggle="tab" href="#workRates">Work Rate Tables</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link m-0 font-weight-bold text-primary" data-toggle="tab" href="#reports">Reports</a>
-                  </li>
-                </ul>
-              </div><!--end of reports card header-->
-              <div class="card-body"><!--beginning of reports card body-->
-                <div class="tab-content"><!--beginning of tab content-->
-                  <div class="tab-pane container fade" id="reports"> <!--beginning of reports tab-->
-                    <table class="table table-bordered">
-                      
-                      <tbody>
-                        {% if request.user.is_staff %}
-                        <tr>
-                          <td colspan="4" class="text-center"><strong>Current Project &rarr;{{task_data.title}}</strong></td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong>Project Resubmit Count:</strong> </td>
-                          <td colspan="2">{{task_resubmits.count}}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong>Project Reset Count:</strong></td>
-                          <td colspan="2">{{task_resets.count}}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong>Project Deadline Score:</strong> </td>
-                          <td colspan="2">{{task_data.deadline_score}}</td>
-                        </tr>
-                        {% endif %}
-                        <tr>
-                          <td colspan="4" class="text-center"><strong>Current Task &rarr;{{subtask_data.name}}</strong></td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong>Task Resubmit Count:</strong> </td>
-                          <td colspan="2">{{subtask_resubmits.count}}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong> Task Reset Count:</strong></td>
-                          <td colspan="2">{{subtask_resets.count}}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" class="bg-secondary text-white"> <strong>Task Deadline Score:</strong> </td>
-                          <td colspan="2">{{subtask_data.subtask_deadline_score}}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div><!--end of reports tab-->
-                  <div class="tab-pane container active" id="workRates"><!--beginning of workrates tab-->
-                    <form action="{% url 'taskmanager:index' %}" method="POST">
-                      {% csrf_token %}
-                      {{form|crispy}}
-                      <input type="submit" value="submit" class="btn btn-sm btn-primary">
-                    </form>
-                    
-                    <hr>
-                    <table class="table table-bordered" id="workRatesTable">
-                      <thead class="thead-dark">
-                        <tr>
-                          <th scope="col">#</th>
-                          <th scope="col">Date Range</th>
-                          <th scope="col">Project Name</th>
-                          <th scope="col">Resubmitted Tasks</th>
-                          <th scope="col">Reset Tasks</th>
-                          <th scope="col">Deadline Scores</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for object in project_sets %}
-                        <tr>
-                          <th scope="row">{{forloop.counter}}</th>
-                          <th>{{object.revised_due_date}}</th>
-                          <th>{{object.task.title}}</th>
-                          <td>
-                           tasks &rarr;{{subtask_resubmits.count}}
-                           </td>
-                          <td>
-                            tasks &rarr;{{subtask_resets.count}}
-                          </td>
-                          <td>{{object.task.deadline_score}}</td>
-                        </tr>
-                        {% endfor %}
-                      </table>
-                      </tbody>
-
-                  </div><!--end of work rates tab-->
-                  </div><!--end of reports card body -->
-                  </div><!--end of tab content-->
-         
-                  
-                </div><!--end of reports card -->
-                
-            </div><!-- end of second div-->
+            
+            
+            
 
               <!-- Content Column -->
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-12 col-md-6 mb-4">
 
               <!-- Project Card Example -->
               <div class="card shadow mb-4">
                 <div class="card-header py-3">
                   <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
                 </div>
+
                 <div class="card-body">
-                  <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="{{task_data.deadline_score}}" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
-                  <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                  <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                  {% for project in projects_incharge %}
+                  
+                  <h4 class="small font-weight-bold">{{project.title}} <span class="float-right">{{project.get_status_display}}&rarr;{{project.task_count}}%</span></h4>
+                  
                   <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width:{{project.task_count}}%" aria-valuenow="{{project.task_count}}" aria-valuemin="0" aria-valuemax="{{project.subtask.count}}"></div>
                   </div>
+                  {% endfor %}
                 </div>
               </div>
               </div>
@@ -423,58 +480,6 @@
           </div>
           <!--end of first row-->
            
-          <!-- Content Row -->
-          <div class="row">
-
-            
-
-
-                 <!--third div-->
-                 <div class="col-lg-6 mb-4">
-                  <!--stats card-->
-                  <div class="card shadow mb-4"> 
-                    <div class="card-header"><!--stats card header-->
-                      <h3>Work Rates</h3>
-                    </div><!--stats card header close-->
-                    <div class="card-body"><!-- stats card body start -->
-                      <table class="table" id="workRatesTable">
-                        
-                        <hr>
-                        <thead class="thead-dark">
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Resubmits</th>
-                            <th scope="col">Resets</th>
-                            <th scope="col">Handle</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>{{task_resubmits.count}}</td>
-                            <td>Otto</td>
-                            <td>@mdo</td>
-                          </tr>
-                          <tr>
-                            <th scope="row">2</th>
-                            <td>{{task_resets.count}}</td>
-                            <td>Thornton</td>
-                            <td>@fat</td>
-                          </tr>
-                          <tr>
-                            <th scope="row">3</th>
-                            <td>{{task_data.deadline_score}}</td>
-                            <td>{{subtask_data.subtask_deadline_score}}</td>
-                            <td>@twitter</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div><!--stats card body end-->
-                    
-                  </div><!--stats card end-->
-      
-                  
-                </div><!-- end third div -->
                 
                   
 
@@ -542,6 +547,7 @@
 <!-- Page level custom scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
 <script src="{% static 'js/chartist.min.js' %}"></script>
 <script src="{% static 'js/bootstrap-notify.js' %}"></script>
@@ -551,6 +557,8 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
 
 {% block extrascripts %}{% endblock extrascripts %}
 {% block extrajs %}{% endblock %}
@@ -562,9 +570,9 @@
         });
     });
     $(function () {
-        $('#datetimepicker1').datepicker({
+        $('#datetimepicker1, #id_multiple_date_picker ').datepicker({
             multidate:true,
-            format:'YYY-MM-DD'
+            // format:'YYYY-MM-DD'
         });
     });
 
@@ -578,15 +586,16 @@
     }
 
     $('#id_date_range_picker').daterangepicker({
+        multidate:true,
         startDate: start,
         endDate: end,
         ranges: {
-          'Today': [moment(), moment()],
-          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-          'This Month': [moment().startOf('month'), moment().endOf('month')],
-          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          // 'Today': [moment(), moment()],
+          // 'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          // 'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+          // 'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          // 'This Month': [moment().startOf('month'), moment().endOf('month')],
+          // 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
     }, cb);
 
@@ -621,11 +630,234 @@
         $('#completeTask').DataTable();
         $('#taskReview').DataTable();
         $('#workRatesTable').DataTable();
+        $('#unsuccessfulBids').DataTable();
+        $('#successfulBids').DataTable();
     } );
+
+
+    $(function () {
     
+     
+
+      var $deadlineChart = $("#myChart");
+      $.ajax({
+        url: $deadlineChart.data("url"),
+        
+        success: function (data) {
+
+          var ctx = $deadlineChart[0].getContext("2d");
+
+          new Chart(ctx, {
+                type: 'line',
+                data: {
+                  labels: data.labels,
+                  datasets: [{
+                    label: 'Deadline Score',
+                    backgroundColor: 'green',
+                    data: data.data
+                  }]          
+                },
+                options: {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Deadline Score Chart'
+                  }
+                }
+              });
+
+            }
+
+
+
+          });
+
+    
+
+    var $resubmissionChart = $("#myChart1");
+    $.ajax({
+      url: $resubmissionChart.data("url"),
+      success: function (data) {
+
+        var ctx1 = $resubmissionChart[0].getContext("2d");
+
+        new Chart(ctx1, {
+              type: 'line',
+              data: {
+                labels: data.labels,
+                datasets: [{
+                  label: 'Resubmission Score',
+                  backgroundColor: 'orange',
+                  data: data.data
+                }]          
+              },
+              options: {
+                responsive: true,
+                legend: {
+                  position: 'top',
+                },
+                title: {
+                  display: true,
+                  text: 'Resubmission Score Chart'
+                }
+              }
+            });
+
+          }
+        });
+
+        var $resetChart = $("#myChart2");
+        $.ajax({
+        url: $resetChart.data("url"),
+        success: function (data) {
+
+          var ctx2 = $resetChart[0].getContext("2d");
+
+          new Chart(ctx2, {
+                type: 'line',
+                data: {
+                  labels: data.labels,
+                  datasets: [{
+                    label: 'Reset Score',
+                    backgroundColor: 'green',
+                    data: data.data
+                  }]          
+                },
+                options: {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Reset Score Chart'
+                  }
+                }
+              });
+
+            }
+          });
+
+
+
+
+      var $qualityChart = $("#myChart3");
+      $.ajax({
+        url: $qualityChart.data("url"),
+        success: function (data) {
+
+          var ctx3 = $qualityChart[0].getContext("2d");
+
+          new Chart(ctx3, {
+                type: 'line',
+                data: {
+                  labels: data.labels,
+                  datasets: [{
+                    label: 'Quality Score',
+                    backgroundColor: 'orange',
+                    data: data.data
+                  }]          
+                },
+                options: {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Quality Score Chart'
+                  }
+                }
+              });
+
+            }
+          });
+
+      var $planningChart = $("#myChart4");
+      $.ajax({
+        url: $planningChart.data("url"),
+        success: function (data) {
+
+          var ctx3 = $planningChart[0].getContext("2d");
+
+          new Chart(ctx3, {
+                type: 'line',
+                data: {
+                  labels: data.labels,
+                  datasets: [{
+                    label: 'Planning  Score',
+                    backgroundColor: 'gray',
+                    data: data.data
+                  }]          
+                },
+                options: {
+                  responsive: true,
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Planning Score Chart'
+                  }
+                }
+              });
+
+            }
+          });
+  
+
+    });
+
+
+    $("#submit_rangee").click(function(event){
+        event.preventDefault();
+        var chartData = $(".chart_data");
+        var all_links = "";
+        var i;
+        var arrayVariable = [ ];
+        $(".chart_data").each(function (i){
+            arrayVariable[i]=$(this).data("url");
+        });
+        // console.log(arrayVariable);
+        var date_range=$("#id_date_range_picker").val();
+        var date_frequency=$("#id_date_frequencies").val();
+        // console.log(date_frequency)
+        var url = $("#range_form").attr("data-ranges-url");
+        var i;
+        for (i = 0; i < arrayVariable.length; i++) {
+        $.ajax({
+            type:'GET',
+            url:arrayVariable[i],
+            data:{
+                'date_range':date_range,
+                'date_frequency':date_frequency
+            },
+        });
+        }
+
+      
+
+
+    });
+
+    
+
+    $("#mark_read").click(function (event) {
+      var url='/inbox/notifications/api/unread_list/'
+      $.ajax({
+        type:'GET',
+        url:url,
+        data:{
+          'mark_as_read':true
+        }
+      })
+    })
+
 </script>
 <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
-
 
 </body>
 

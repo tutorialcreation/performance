@@ -76,7 +76,7 @@ def login_view(request):
 			if user and user.is_active:
 				login(request,user)
 				if login_user.is_authenticated:
-					return redirect('dashboard:dashboard')
+					return redirect('taskmanager:index')
 			else:
 			    messages.error(request,'Account is invalid',extra_tags = 'alert alert-error alert-dismissible show' )
 			    return redirect('accounts:login')

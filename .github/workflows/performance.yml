@@ -1,0 +1,96 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Performance System CI
+
+on:
+  push:
+    branches: [ master, testing-webhooks ]
+  pull_request:
+    branches: 
+      - '*'
+
+jobs:
+  test:
+    name: Performance Continuous Integration
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:11.0
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_performance
+        ports:
+          - 5432:5432
+      
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    - name: psycopg2 dependencies
+      run: sudo apt-get install python-dev libpq-dev
+    - name: Install pipenv
+      run: pip install pipenv
+    - name: Install dependencies
+      run: pipenv install
+    # - name: Lint with flake8
+    #   run: |
+    #     # stop the build if there are Python syntax errors or undefined names
+    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with coverage
+      env:
+        DB_USER: postgres
+        DB_HOST: localhost
+        DB_PASSWORD: postgres
+        DB_NAME: test_performance
+        DB_PORT: 5432
+      run: | 
+          pipenv run coverage run --source=taskmanager  manage.py test --verbosity=2
+          pipenv run coverage report -m 
+  
+
+  build-and-deploy:
+    name: Performance Continuous Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Executing Performance Continous Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /srv/www/html/performance_system/
+            source .env
+            git fetch
+            git reset --hard origin/testing-webhooks
+            source $(pipenv --venv)/bin/activate
+            pipenv install
+            export PASSWORD=${{secrets.PASSWORD}}
+            export DB_NAME=${{ secrets.DB_NAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export DB_HOST=${{ secrets.HOST }}
+            export DB_USER=${{ secrets.DB_USER }}
+            export SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+            export EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
+            pipenv run python manage.py makemigrations
+            pipenv run python manage.py migrate
+            pipenv run python manage.py collectstatic --no-input
+            echo "$PASSWORD" | sudo -S systemctl restart performance.service
+            echo "$PASSWORD" | sudo -S systemctl restart nginx.service
+
+
+  
+
+
+

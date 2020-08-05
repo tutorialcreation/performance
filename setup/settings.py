@@ -16,16 +16,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Email Settings
-EMAIL_HOST = os.getenv('EMAIL_HOST', '')
-EMAIL_PORT = os.getenv('EMAIL_PORT', '')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','')
-# EMAIL_USE_SSL = True
-EMAIL_USE_TLS = True
-EMAIL_SENDER = 'noreply@actserv.com'
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 BOOTSTRAP3 = {
     'javascript_in_head': True,
@@ -42,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django.contrib.sites',
 
+    'djmoney',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -63,6 +55,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_select2',
     'django_filters',
+    'notifications',
 
     # PROJECT APPS
     'dashboard',
@@ -71,7 +64,10 @@ INSTALLED_APPS = [
     'leave',
     'taskmanager',
     'reports',
+    'crm'
 ]
+
+ASGI_APPLICATION = "setup.asgi.application"
 
 
 SITE_ID = 1
@@ -106,6 +102,8 @@ TEMPLATES = [
                 'taskmanager.context_processors.get_teams',
                 'taskmanager.context_processors.get_task_analysis',
                 'taskmanager.context_processors.get_subtask_analysis',
+                'taskmanager.context_processors.get_notifications',
+                'leave.context_processors.get_leaves',
             ],
         },
     },
@@ -116,20 +114,18 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    #  'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
- 
-    'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': os.getenv('DB_NAME', ''),
-       'PASSWORD': os.getenv('DB_PASSWORD', ''),
-       'HOST': os.getenv('DB_HOST', ''),
-       'USER': os.getenv('DB_USER', ''),
-       'PORT': '5432',
-    }
+DATABASES = { 
+	'default': {
+		'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		'NAME': os.getenv('DB_NAME', 'performance'),
+		'PASSWORD': os.getenv('DB_PASSWORD', 'luther1996-'),
+		'HOST': os.getenv('DB_HOST', 'localhost'),
+		'USER': os.getenv('DB_USER', 'postgres'),
+		'PORT': os.getenv('DB_PORT', 5432),
+	 }
+
+	 
+    
 }
 
 
@@ -191,7 +187,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 # STATIC FILES WILL BE SERVED FROM STATIC_CDN WHEN WE ARE LIVE - OUT SIDE OF PROJECT
-STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # THIS KEEPS THE PROJECT FILES - CSS/JS/IMAGES/FONTS
 
@@ -208,16 +204,16 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-EMAIL_PORT = 587
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'hesbon.maiyo@actserv.co.ke')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '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')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','Hesbon5600')
+FROM_EMAIL ="brooks-no-reply@actserv.co.ke"
+DEFAULT_FROM_EMAIL="brooks-no-reply@actserv.co.ke"
 EMAIL_USE_TLS = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-FROM_EMAIL = 'lutherlunyamwi@gmail.com'
-DEFAULT_FROM_EMAIL = 'lutherlunyamwi@gmail.com'
-SENDGRID_API_KEY=os.getenv('SENDGRID_API_KEY','')
-EMAIL_CONFIRMATION_HMAC='lutherlunyamwi@gmail.com'
+EMAIL_SENDER = 'hesbon.dev@gmail.com'
+EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
 
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=7
@@ -263,3 +259,16 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}
+
+TWILIO_ACCOUNT_SID='ACf12a703b1e1be2ed9f271e7a18bc8f87'
+TWILIO_AUTH_TOKEN='58a4638655f0210c42f128caa8d4b57b'
+TWILIO_NUMBER='+17609708434'

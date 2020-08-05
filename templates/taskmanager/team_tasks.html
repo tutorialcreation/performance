@@ -12,13 +12,21 @@
 
 <!---start of container-->
 <div class="container-fluid"> 
-
+  {% if  messages %}
+  {% for message in messages %}
+      <div {% if message.tags %} class="{{ message.tags}} alert-info"{% endif %}>
+          {{ message }}
+          <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+  {% endfor %}
+  {% endif %}
   <div class="row">
     
     <div class="col-lg-12"><!-- beginning of second div -->
    
     <div class="card">
-      <div class="card-header bg-primary text-white"><h5>{{team.name}}</h5></div>
+      <div class="card-header bg-success text-white"><h5>{{team.name}}</h5></div>
     </div> 
     <hr>
     {% for team in team.members.all %}
@@ -27,7 +35,7 @@
       <div class="card"><!--begninning of card-->
         <div class="card-header" id="teamMember"><!--team member card header-->
           <h5 class="mb-0">
-            <p class="pull-left text-primary"><strong><i class="fa fa-user"></i> {{team.username}}</strong></p>
+            <p class="pull-left text-success"><strong><i class="fa fa-user"></i> {{team.username}}</strong></p>
             <button class="btn btn-link pull-right" data-toggle="collapse" data-target="#collapseTeamMember-{{forloop.counter}}" aria-expanded="true" aria-controls="collapseTeamMember-{{forloop.counter}}">
               <h5><i class="fa fa-plus-circle"></i></h5>
             </button>
@@ -41,13 +49,17 @@
               <div id="accordion"> 
                 <!---start of first card -->
                 <div class="card">
-                    <div class="card-header bg-primary text-white" id="toAccept">
+                    <div class="card-header bg-success text-white" id="toAccept">
                       <h3>
                         <button class="btn btn-link badge badge-light pull-left" data-toggle="collapse" data-target="#collapseToAccept" aria-expanded="true" aria-controls="collapseToAccept">
                         Tasks To Accept
                         <i class="fa fa-caret-down"></i>
                       </button>
-                        <p class="pull-right"><i class="fa fa-bell"></i> {{ tasks.count }} task(s) </p>
+                        {% if tasks.count > 10 %}
+                        <p class="pull-right" style="color: red;"><i class="fa fa-bell"></i> {{ tasks.count }} task(s) </p>
+                        {% else %}
+                        <p class="pull-right" style="color: blue;"><i class="fa fa-bell"></i> {{ tasks.count }} task(s) </p>
+                        {% endif %}
                       </h3>
                     </div>
                     <!--- beginning of collapse -->
@@ -57,7 +69,7 @@
                         {% if tasks %}
                         <table id="acceptTask" class="table table-bordered table-striped table-hover">
                           <thead><!--head of first table-->
-                          <tr class="bg-primary text-white">
+                          <tr class="bg-success text-white">
                             <th>Project Name</th>
                             <th>Team</th>
                             <th>Created By</th>
@@ -67,7 +79,7 @@
                               <th>Tasks</th>
                               <th>Accept</th>
                             {% else %}
-                              <th>Completed Date</th>
+                              <th>Completed / Approved Date</th>
                             {% endif %}
                             <th>Actions</th>
                           </tr>
@@ -119,10 +131,14 @@
                                 </td>
                                 {% endif %}
                               {% else %}
-                                <td>{{ task.completed_date }}</td>
+                              {% if subtask.completed_date %}
+                              <td>{{ subtask.completed_date}}</td> 
+                              {% else %}
+                              <td>{{subtask.approved_date }}</td>
+                              {% endif %}
                               {% endif %}
                               <td><div class="btn-group">
-                                <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                                <button data-id="{% url 'taskmanager:task_extend' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
                                 <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
                               </div></td>
                             </tr>
@@ -130,6 +146,7 @@
                             {% endfor %}
                             {% endfor %}
                           </tbody><!-- end of first table body-->
+                         
                         </table>
                       {% endif %}
                 
@@ -139,7 +156,7 @@
                 <!--end of first card -->
                 <!--- beginning of second card -->
                 <div class="card">
-                    <div class="card-header bg-primary text-white" id="ongoingTasks">
+                    <div class="card-header bg-success text-white" id="ongoingTasks">
                       <h3>
                         <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseOngoingTasks" aria-expanded="false" aria-controls="collapseOngoingTasks">
                           Ongoing Tasks
@@ -150,12 +167,12 @@
                     </div>
                     <div id="collapseOngoingTasks" class="collapse" aria-labelledby="ongoingTasks" data-parent="#accordion"><!--- beginning of second collapse -->
                     <div class="card-body">
-                      <p>{{tasks_inprogress}}</p>
+                      <p>{{tasks_inprogress.count}} tasks are ongoing </p>
                       
                       {% if tasks_inprogress %}
                       <table id="ongoingTask" class="table table-bordered table-striped table-hover">
                         <thead><!-- beginning of second table head -->
-                        <tr class="bg-primary text-white">
+                        <tr class="bg-success text-white">
                           <th>Project Name</th>
                           <th>Tasks</th>
                           <th>Team</th>
@@ -166,7 +183,7 @@
                             <th>Due Date</th>
                             <th>Submit</th>
                           {% else %}
-                            <th>Completed Date</th>  
+                            <th>Completed / Approved Date</th>  
                           {% endif %}
                           <th>Revised Due Date</th>
                           <th>Actions</th>
@@ -211,11 +228,19 @@
                               </td>
                               {% endif %}
                             {% else %}
-                              <td>{{ subtask.completed_date }}</td>
+                            {% if subtask.completed_date %}
+                            <td>{{ subtask.completed_date}}</td> 
+                            {% else %}
+                            <td>{{subtask.approved_date }}</td>
                             {% endif %}
-                              <td>{{ subtask.completed_date }}</td>
+                            {% endif %}
+                            {% if subtask.completed_date %}
+                            <td>{{ subtask.completed_date}}</td> 
+                            {% else %}
+                            <td>{{subtask.approved_date }}</td>
+                            {% endif %}
                               <td><div class="button-group">
-                                <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                                <button data-id="{% url 'taskmanager:task_extend' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
                                 <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
                               </div></td>
                           </tr>
@@ -232,7 +257,7 @@
 
                 <!--- beginning of third card -->
                 <div class="card">
-                  <div class="card-header bg-primary text-white" id="completedTasks">
+                  <div class="card-header bg-success text-white" id="completedTasks">
                     <h3>
                       <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseCompletedTasks" aria-expanded="false" aria-controls="collapseCompletedTasks">
                         Completed Tasks
@@ -243,18 +268,18 @@
                   </div>
                   <div id="collapseCompletedTasks" class="collapse" aria-labelledby="completedTasks" data-parent="#accordion"><!--- beginning of third collapse -->
                   <div class="card-body">
-                    <p>You have completed {{ tasks.count }} task(s) and {{tasks.count}} task(s) have been approved and {{tasks.count}} task(s) have been reassigned to other individuals.</p>
+                    <p></p>
                     {% if completed_tasks %}
                     <table id="completeTask" class="table table-bordered table-striped table-hover">
                       <thead><!-- beginning of third table head -->
-                      <tr class="bg-primary text-white">
+                      <tr class="bg-success text-white">
                         <th>Project Name</th>
                         <th>Tasks</th>
                         <th>Team</th>
                         <th>Created By</th>
                         <th>Client</th>
                         <th>Project Coordinator</th>
-                        <th>Completed Date</th>
+                        <th>Completed / Approved Date</th>
                         <th>Status</th>
                       </tr>
                       </thead><!-- beginning of third table head -->
@@ -262,7 +287,7 @@
                         {% for task in completed_or_approved_tasks%}
                         
                         {% for subtask in task.subtask.all %}
-                        {% if subtask.member_assigned.username == team.username and subtask.status == 'COMP' or subtask.status == 'APP'  or subtask.status == 'RET' %}
+                        {% if subtask.member_assigned.username == team.username %}
                         <tr>
                           <td><a href="{{ task.get_absolute_url }}">{{ task.title }}</a></td>
                           <td>
@@ -286,7 +311,11 @@
                                 {% endfor %}
                               </ul>
                             </td>
-                            <td>{{ subtask.completed_date }}</td>
+                            {% if subtask.completed_date %}
+                            <td>{{ subtask.completed_date}}</td> 
+                            {% else %}
+                            <td>{{subtask.approved_date }}</td>
+                            {% endif %}
                             <td class="badge badge-success"><i class="fa fa-check-circle"></i>{{ subtask.get_status_display }}</td>
                           </tr>
                           
@@ -303,13 +332,13 @@
 
                 <!--- beginning of fourth card -->
                 <div class="card">
-                  <div class="card-header bg-primary text-white" id="toReview">
+                  <div class="card-header bg-success text-white" id="toReview">
                     <h3>
                       <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseToReview" aria-expanded="false" aria-controls="collapseToReview">
                         Tasks To Review
                       <i class="fa fa-caret-down"></i>
                       </button>
-                      <p class="pull-right"><i class="fa fa-bell"></i> {{ approved_tasks.count }} task(s) </p>
+                      <p class="pull-right"><i class="fa fa-bell"></i> {{ completed_tasks.count }} task(s) </p>
                     </h3>      
                   </div>
                   <div id="collapseToReview" class="collapse" aria-labelledby="toReview" data-parent="#accordion"><!--- beginning of fourth collapse --> 
@@ -321,14 +350,14 @@
                     {% if completed_tasks %}
                     <table id="taskReview" class="table table-bordered table-striped table-hover">
                       <thead><!--beginning of fourth table head-->
-                      <tr class="bg-primary text-white">
+                      <tr class="bg-success text-white">
                         <th>Project Name</th>
                         <th>Tasks</th>
                         <th>Team</th>
                         <th>Created By</th>
                         <th>Client</th>
                         <th>Project Coordinator</th>
-                        <th>Completed Date</th>
+                        <th>Completed / Approved Date</th>
                         <th>Approve/Return</th>
                         <th>Actions</th>
                         <th>Status</th>
@@ -361,13 +390,18 @@
                               {% endfor %}
                             </ul>
                           </td>
-                          <td>{{ task.completed_date }}</td>
+                          {% if subtask.completed_date %}
+                          <td>{{ subtask.completed_date}}</td> 
+                          {% else %}
+                          <td>{{subtask.approved_date }}</td>
+                          {% endif %}
                           <td>
-                            <button data-id="{% url 'taskmanager:subtask_rating' task.pk %}?subtask_id={{subtask.pk}}" class="rating btn btn-warning btn-sm"><i class="fa fa-check">approve</i></button>
-                            <a href="{% url 'taskmanager:task_mark_revision' task.pk %}?subtask_id={{subtask.pk}}" class="btn btn-sm btn-danger"> <i class="fa fa-close"></i> return</a>
+                            <button data-id="{% url 'taskmanager:subtask_rating' pk=task.pk %}?subtask_id={{subtask.pk}}" class="rating btn btn-warning btn-sm"><i class="fa fa-check">approve</i></button>
+                            <button data-id="{% url 'taskmanager:subtask_return' pk=task.pk %}?subtask_id={{subtask.pk}}" class="return btn btn-danger btn-sm"><i class="fa fa-close">return</i></button>
+                            
                           </td>
                           <td><div class="button-group">
-                            <button data-id="{% url 'taskmanager:task_update' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
+                            <button data-id="{% url 'taskmanager:task_extend' task.pk %}" class="due_date btn btn-sm btn-success"><i class="fa fa-edit">extend deadline</i></button>
                             <button data-id="{% url 'taskmanager:task_reassign' task.pk %}" class="reassign btn btn-sm btn-warning"><i class="fa fa-user">reassign</i></button>
                           </div></td>
                           {% if task.status == 'RET' %}
@@ -392,38 +426,35 @@
                 
                 <!--- beginning of fifth card -->
                 <div class="card">
-                  <div class="card-header bg-primary text-white" id="projects">
+                  <div class="card-header bg-success text-white" id="projects">
                     <h3>
                       <button class="btn btn-link badge badge-light pull-left collapsed" data-toggle="collapse" data-target="#collapseProjects" aria-expanded="false" aria-controls="collapseToReview">
                         Projects
                       <i class="fa fa-caret-down"></i>
                       </button>
-                      <p class="pull-right"><i class="fa fa-bell"></i> {{ approved_tasks.count }} task(s) </p>
+                      <p class="pull-right"><i class="fa fa-bell"></i> {{ tasks.count }} task(s) </p>
                     </h3>      
                   </div>
                   <div id="collapseProjects" class="collapse" aria-labelledby="toReview" data-parent="#accordion"><!--- beginning of fourth collapse --> 
                   <div class="card-body">
-                    <p>
-                      You have approved {{ tasks.count }} task(s) and {{tasks.count}} task(s) are waiting to be reviewed for returning for revision 
-                      and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
-                    </p>
+                    
                     {% if tasks %}
                     <table id="taskReview" class="table table-bordered table-striped table-hover">
                       <thead><!--beginning of fifth table head-->
-                      <tr class="bg-primary text-white">
+                      <tr class="bg-success text-white">
                         <th>Project Name</th>
                         <th>Team</th>
                         <th>Created By</th>
                         <th>Client</th>
                         <th>Project Coordinator</th>
-                        <th>Completed Date</th>
+                        <th>Completed / Approved Date</th>
                         <th>Status</th>
                       </tr>
                       </thead><!--end of fifth table head-->
                       <tbody><!-- beginning of fifth table body-->
                       {% for task in tasks %}
                       {% for subtask in task.subtask.all %}
-                      {% if subtask.member_assigned.username == team.username and forloop.last %}
+                      {% if subtask.member_assigned in subtask.task.assigned_to.all %}
                         <tr>
                           <td><a href="{{ task.get_absolute_url }}">{{ task.title }}</a></td>
                           <td>
@@ -442,7 +473,11 @@
                               {% endfor %}
                             </ul>
                           </td>
-                          <td>{{ task.completed_date }}</td>
+                          {% if subtask.completed_date %}
+                          <td>{{ subtask.completed_date}}</td> 
+                          {% else %}
+                          <td>{{subtask.approved_date }}</td>
+                          {% endif %}
                           <td>{{subtask.get_status_display}}</td>
                         </tr>
                       {% endif %}
@@ -451,8 +486,11 @@
                       </tbody><!-- end of fifth table body-->
                     </table>
                   {% endif %}    
-                  </div>
-                  </div><!--- end of fifth collapse -->
+
+                </div>
+              </div><!--- end of fifth collapse -->
+                <hr>
+                <a href="/task-master/" class="btn btn-success btn-block">View {{team.username}}'s dashboard</a>
                 </div>
                 <!--- end of fifth card -->
 
@@ -488,6 +526,9 @@
       
       // Update level buttons
       $(".rating").each(function () {
+        $(this).modalForm({formURL:$(this).data('id')});
+      });
+      $(".return").each(function () {
         $(this).modalForm({formURL:$(this).data('id')});
       });
   });

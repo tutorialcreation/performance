@@ -16,10 +16,10 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.generic import TemplateView
+import notifications.urls
 from django.conf.urls import url
-from taskmanager.views.tasks import send_push,view_push
 from . import views
 
 urlpatterns = [
@@ -28,12 +28,13 @@ urlpatterns = [
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('task-master/', include('taskmanager.urls')),
-    # path('',view_push, name='view_push'),
-    path('send_push', send_push, name='send_push'),
     path('reports/', include('reports.urls', namespace='reports')),
     path('webpush/', include('webpush.urls')),
     path('select2/', include('django_select2.urls')),
     path('bs_index/',views.bootstrap_index),
+    path('crm/',include('crm.urls',namespace='crm')),
+    re_path(r'^inbox/notifications/',include('notifications.urls',namespace='notifications')),
+
     # path('accounts/', include('allauth.urls')),
 ]
 

@@ -25,14 +25,12 @@
       <strong class="w3-bar-item"><i>{{ user.username }}</i></strong>
       <a href="{% url 'taskmanager:index' %}" class="w3-bar-item w3-button">Departments</a>
       <a href="{% url 'taskmanager:task_my_tasks' %}" class="w3-bar-item w3-button">My Tasks</a>
-      <a href="{% url 'taskmanager:task_completed_tasks' %}" class="w3-bar-item w3-button">Completed Tasks</a>
       <a href="{% url 'taskmanager:task_create' %}" class="w3-bar-item w3-button">Add a Task</a>
       <a href="{% url 'taskmanager:team_create' %}" class="w3-bar-item w3-button">Create a Team</a>
       <form method="get" action="{% url 'taskmanager:task_search' %}" class="w3-margin-top w3-margin-bottom">
         <input type="text" name="q" class="w3-input w3-border" placeholder="Search task" required>
         <input type="submit" value="Search" class="w3-button w3-grey w3-margin">
       </form>
-      <a href="{% url 'taskmanager:logout' %}" class="w3-bar-item w3-button">LogOut</a>
     {% else %}
       <a href="{% url 'taskmanager:signup' %}" class="w3-bar-item w3-button">Sign Up</a>
     {% endif %}

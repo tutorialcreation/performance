@@ -1,0 +1,21 @@
+{% extends '_layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+{% if  messages %}
+{% for message in messages %}
+    <div {% if message.tags %} class="{{ message.tags}} alert-info"{% endif %}>
+        {{ message }}
+        <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+{% endfor %}
+{% endif %}
+<div class="container">
+    <form action="{% url 'taskmanager:task_source' %}" method="post">
+        {% csrf_token %}
+        {{form|crispy}}
+        <input type="submit" value="submit" class="btn btn-sm btn-success">
+    </form>
+</div>
+{% endblock %}

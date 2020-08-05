@@ -1,0 +1,6 @@
+{% extends '_layout.html' %}
+
+{% block content %}
+<a href="{% url 'crm:send_bulk_sms' %}" class="btn btn-primary"> Send Bulk Sms.</a>
+<a href="{% url 'crm:send_mass_email' %}" class="btn btn-primary"> Send Mass Email.</a>
+{% endblock %}

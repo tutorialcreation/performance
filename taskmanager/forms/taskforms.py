@@ -6,11 +6,15 @@ from django.contrib.auth.models import User
 from django.forms import formset_factory
 from django.forms.models import inlineformset_factory
 from crispy_forms.helper import FormHelper
-from taskmanager.models import Task,TaskReview,SubTask,Team
+from taskmanager.models import (
+    Task,TaskReview,SubTask,Team,
+    TaskSource,BidOrAwardAnalyzer,BiddedTask,
+    InvoiceDetail
+)
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import TabHolder,Tab
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
-from taskmanager.custom_layout_object import Formset
+from taskmanager.custom_layout_object import Formset,BidFormset
 # Get the user model defined in setting.AUTH_USER_MODEL
 UserModel = get_user_model()
 
@@ -27,7 +31,6 @@ class TaskCreationForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Field('title'),
@@ -40,11 +43,10 @@ class TaskCreationForm(forms.ModelForm):
                     Fieldset('Add Task(s)',
                     Formset('subtasks')),
                     HTML("<br>"),
-                    ButtonHolder(Submit('submit', 'create task')),
+                    ButtonHolder(Submit('submit', 'Kickstart project', css_class='btn btn-success')),
                 )
             )
         self.fields["assigned_to"].queryset = Team.objects.none()
-        # import pdb; pdb.set_trace()
         if 'team' in self.data:
             try:
                 team_id=int(self.data.get('team'))
@@ -63,19 +65,18 @@ class TaskUpdateForm(forms.ModelForm):
         fields = ('title','assignment_type','assignment_typeset','client_name','assigned_to','due_date','team')
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(TaskUpdateForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Field('title'),
                     Field('client_name'),
                     Field('team'),
-                    # Field('assigned_to'),
                     Field('assignment_typeset'),
                     Field('assignment_type'),
                     Field('due_date'),
@@ -85,27 +86,6 @@ class TaskUpdateForm(forms.ModelForm):
                     ButtonHolder(Submit('submit', 'submit')),
                 )
             )
-        self.fields["assigned_to"].queryset = Team.objects.none()
-        self.fields["assignment_typeset"].queryset=Task.objects.none()
-
-        # import pdb; pdb.set_trace()
-        if 'team' in self.data:
-            try:
-                team_id=int(self.data.get('team'))
-                self.fields["assigned_to"].queryset=Team.objects.filter(pk=team_id).first().members.all()
-            except (ValueError,TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields["assigned_to"].queryset=Team.objects.all().first().members.all()
-
-        if 'team' in self.data:
-            try:
-                team_id=int(self.data.get('team'))
-                self.fields["assigned_typeset"].queryset=Task.objects.filter(team_id=team_id)
-            except (ValueError,TypeError):
-                pass
-        elif self.instance.pk:
-            self.fields["assigned_to"].queryset=Task.objects.all().first()
 
 
 
@@ -123,7 +103,6 @@ class ExtendDeadlineForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Fieldset('Extend Deadline',
@@ -134,21 +113,69 @@ class ExtendDeadlineForm(forms.ModelForm):
             )
        
 
+class TaskBidForm(forms.ModelForm):
+
+    class Meta:
+        model = BiddedTask
+        fields = (
+            'assignment_type',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(TaskBidForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3 create-label'
+        self.helper.field_class = 'col-md-9'
+        self.helper.layout = Layout(
+                Div(
+                    Fieldset('Administer Project Pricing',
+                    BidFormset('bids')),
+                    HTML("<br>"),
+                    ButtonHolder(Submit('submit', 'submit')),
+                )
+            )
+
+
+class ReturnForm(forms.ModelForm):
+
+    class Meta:
+        model = SubTask
+        fields = ('return_reason',)
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ReturnForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3 create-label'
+        self.helper.field_class = 'col-md-9'
+        self.helper.layout = Layout(
+                Div(
+                    Field('return_reason'),
+                    HTML("<br>"),
+                    ButtonHolder(Submit('submit', 'submit')),
+                )
+            )
+
 
 class ReassigningForm(forms.ModelForm):
 
     class Meta:
         model = Task
-        fields = ('due_date',)
+        fields = ('due_date','reassign_reason',)
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(ReassigningForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_tag = True
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Fieldset('Reassign Individual',
@@ -173,7 +200,6 @@ class RatingForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Field('rating'),
@@ -197,7 +223,6 @@ class SubTaskRatingForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3 create-label'
         self.helper.field_class = 'col-md-9'
-        # import pdb; pdb.set_trace()
         self.helper.layout = Layout(
                 Div(
                     Field('rating'),
@@ -224,13 +249,34 @@ class SubTaskUpdateForm(forms.ModelForm):
 
 SubTaskUpdateFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date'],extra=1,can_delete=True)
 
+class SubTaskExtendForm(forms.ModelForm):
+
+    class Meta:
+        model = SubTask
+        exclude = ()
+
+SubTaskExtendFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date','extension_reason'],extra=1,can_delete=True)
+
+
+
 class SubTaskReassignForm(forms.ModelForm):
 
     class Meta:
         model = SubTask
         exclude = ()
 
-SubTaskReassignFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','member_assigned'],extra=1,can_delete=True)
+SubTaskReassignFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','member_assigned','reassign_reason'],extra=1,can_delete=True)
+
+class SubTaskBidForm(forms.ModelForm):
+
+    class Meta:
+        model = BidOrAwardAnalyzer
+        exclude = ()
+
+SubTaskBidFormset=inlineformset_factory(BiddedTask,BidOrAwardAnalyzer,form=SubTaskBidForm, fields=[
+    'assignment','currency','frequency',
+    'period_of_assignment','period_of_assignment_range',
+    ],extra=1,can_delete=True)
 
 
 class TaskEditForm(ModelForm):
@@ -259,11 +305,9 @@ class TaskEditForm(ModelForm):
         self.fields["assigned_to"].widget.attrs.update({"class": "w3-select"})
         self.fields["team"].widget.attrs.update({"class": "w3-select"})
         if kwargs.get('initial').get('has_team'):
-            # We don't want user to edit assigned team, if it is already assigned to one team
             del self.fields["team"]
             self.fields["assigned_to"].queryset = kwargs.get('initial').get('members')
         else:
-            # If task is still not assigned to any team, there us no need of assigned_to field
             del self.fields["assigned_to"]
             self.fields["team"].queryset = kwargs.get('initial').get('teams')
 
@@ -333,6 +377,51 @@ class SignUpForm(forms.ModelForm):
 
 
 class DateRangeInput(forms.Form):
-    date_range_picker=forms.CharField(label='Select Date Range',max_length=1024)
+    FREQUENCY_CHOICES=(
+        ("D","Daily"),
+        ("W","Weekly"),
+        ("M","Monthly"),
+        ("3M","Quarterly"),
+        ("6M","Semi-annually"),
+        ("12M","Yearly"),
+    )
+    date_range_picker=forms.CharField(label='Select Date Range',max_length=1024,required=False)
+    date_frequencies=forms.ChoiceField(choices=FREQUENCY_CHOICES,required=False)
 
-    
+
+class SuccessForm(forms.Form):
+    SUCCESSFUL_OR_NOT=(
+        ("SUCCESS","Successful Bid"),
+        ("UNSUCCESS","Unsuccesful Bid"),
+    )
+
+    was_the_bid_successful=forms.ChoiceField(widget=forms.RadioSelect,choices=SUCCESSFUL_OR_NOT)
+
+
+
+class TaskSourceForm(forms.ModelForm):
+     class Meta:
+        model = TaskSource
+        fields = ('task','source')
+
+
+class InvoicingForm(forms.ModelForm):
+    class Meta:
+        model = InvoiceDetail
+        fields = ('work_description','invoice_number',)
+
+    def __init__(self, *args, **kwargs):
+        super(InvoicingForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3 create-label'
+        self.helper.field_class = 'col-md-9'
+        self.helper.layout = Layout(
+            Div(
+                Field('work_description'),
+                Field('invoice_number'),
+                HTML("<br>"),
+                ButtonHolder(Submit('submit', 'submit')),
+            )
+        )

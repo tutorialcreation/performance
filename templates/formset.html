@@ -28,17 +28,29 @@
 <br>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
 </script>
-<script src="{% static 'taskmanager/js/libraries/jquery.formset.js' %}">
+<script src="{% static 'js/jquery.formset.js' %}">
 </script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y=" crossorigin="anonymous" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js" integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk=" crossorigin="anonymous"></script>
 
+
 <script type="text/javascript">
     $(function () {
-      $("#id_task_due_date").datetimepicker({
-           format: 'd-m-Y H:i',
+      $("#id_task_due_date").datepicker({
+        format:'yyyy-mm-dd',
       });
     });
+
+
+    $(function () {
+      for(var counter=0; counter<10; counter++){
+        $("#id_subtask-"+counter+"-task_due_date").datepicker({
+            format:'yyyy-mm-dd'
+        });
+      }  
+    });
+
+    
     jQuery('#id_assignment_type').on('change', () => {
         // You can also do this with document.querySelector('')
         if ($('#id_assignment_type option:selected').text() == 'OTHER') {

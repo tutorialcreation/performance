@@ -6,8 +6,17 @@
 
 {% block content %}
 <div class="container">
+  {% if  messages %}
+  {% for message in messages %}
+      <div {% if message.tags %} class="{{ message.tags}} alert-info"{% endif %}>
+          {{ message }}
+          <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+  {% endfor %}
+  {% endif %}
   <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-success text-white">
       <div class="w3-margin-left">
         <h2 class="">{{ team.name }}</h2>
         {% if team.desc %}

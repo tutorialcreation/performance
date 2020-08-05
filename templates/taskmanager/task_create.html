@@ -8,12 +8,29 @@
 {% block content %}
 
 <div class="container">
+    {% if  messages %}
+    {% for message in messages %}
+        <div {% if message.tags %} class="{{ message.tags}} alert-info"{% endif %}>
+            {{ message }}
+            <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endfor %}
+    {% endif %}
     <div class="card">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-success text-white">
             {% if create %}
             KickStart Project
             {% elif update %}
             Edit Project
+            {% elif revision %}
+            Return Task for revision
+            {% elif bidding %}
+            Bid Analyzer
+            {% elif create_client %}
+            Add Client
+            {% elif create_contact %}
+            Add Contact
             {% else %}
             Rate Task
             {% endif %}

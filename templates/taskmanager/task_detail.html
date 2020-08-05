@@ -1,20 +1,64 @@
 {% extends '_layout.html' %}
 
+{% load crispy_forms_tags %}
 {% block navheader %}
 {% include 'includes/navheader_employee_app.html' %}
 {% endblock %}
 
 {% block content %}
 <div class="container">
+  {% if  messages %}
+  {% for message in messages %}
+      <div {% if message.tags %} class="{{ message.tags}} alert-info"{% endif %}>
+          {{ message }}
+          <button type="button" class="close" id = "override-start"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+  {% endfor %}
+  {% endif %}
   <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-success text-white">
       <h3>{{task.title}}</h3>
     </div>
     <div class="card-body">
       <div class="w3-cell-row">
         <div class="w3-card w3-container w3-cell w3-cell-middle w3-mobile">
           <h2 class="w3-padding-16">{{ task.title }}</h2>
-    
+          <button type="button" id="successBtn" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Assign</button>
+          <input type="hidden" name="task_info" id="id_task_info" value="{{subtask.pk}}">
+          <div class="taskPk" id="taskPk">{{subtask.pk}}</div>
+
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Bid Status</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="." method="post">
+                    {% csrf_token %}
+                    {{success_form|crispy}}
+                    <div id="extraForm" class="hide" style="display: none;">
+                      <label for="id_notification_date">Notification Date:</label>
+                      <input type="date" name="notification_date" id="id_notification_date" class="form-control" placeholder="Notification Date">
+                      <br>
+                      <label for="id_unsuccessful_reason">Why Unsuccessful??..</label>
+                      <input type="text" name="unsuccessful_reason" id="id_unsuccessful_reason" class="form-control" placeholder="Reason for being unsuccessful">
+                      <br>
+                    </div>
+                      <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <input type="submit" class="btn btn-success" value="submit">
+                    </div>
+                  </form>
+                  
+                </div>
+              </div>
+            </div>
+          </div>  
           {% if task.desc %}
             {{ task.desc|safe|urlize|linebreaks }}
           {% endif %}
@@ -25,7 +69,7 @@
               
               {# Only task creator can edit the task #}
               {% if user == task.creator and task.status == 'PLAN' %}
-                <a href="{% url 'taskmanager:task_edit' task.id %}">
+                <a href="{% url 'taskmanager:task_update' task.id %}">
                   <button class="w3-button w3-green w3-margin-bottom w3-margin-top">Edit Task</button>
                 </a>
               {% endif %}
@@ -63,6 +107,30 @@
           
           <p class="border-bottom"><strong>Subtasks:</strong></p>
           <ul>
+            {% if request.user in subtask.task.assigned_to.all %}
+            {% for subtask in subtasks %}
+            <div class="row border-bottom">
+              <div class="col-4">
+                <li>{{subtask.name}}&rarr;{{subtask.member_assigned}}</li>
+              </div>
+              <div class="col-4">
+                <fieldset class="starability-result mx-auto " data-rating="{{ subtask.rating }}">
+                  Rated {{ subtask.rating }} stars
+                </fieldset>
+              </div>
+              <div class="col-4">
+                <p>Comments &rarr; {{subtask.content}}</p>
+              </div>
+            </div>
+            <div class="row border-bottom">
+              <div class="col-12">
+               <p> Return reason &rarr; {{subtask.return_reason}}</p>
+               <p>Reassign reason &rarr; {{subtask.reassign_reason}}</p>
+               <p>Extension reason &rarr; {{subtask.extension_reason}}</p>
+              </div>
+            </div>
+            {% endfor %}
+            {% else %}
             {% for subtask in my_subtasks %}
             <div class="row border-bottom">
               <div class="col-4">
@@ -77,7 +145,15 @@
                 <p>Comments &rarr; {{subtask.content}}</p>
               </div>
             </div>
+            <div class="row border-bottom">
+              <div class="col-12">
+               <p> Return reason &rarr; {{subtask.return_reason}}</p>
+               <p>Reassign reason &rarr; {{subtask.reassign_reason}}</p>
+               <p>Extension reason &rarr; {{subtask.extension_reason}}</p>
+              </div>
+            </div>
             {% endfor %}
+            {% endif %}
           </ul>
           <div class="row">
             <div class="col-6">
@@ -127,5 +203,16 @@
   </div>
   
 </div>
-  
 {% endblock %}
+{% block extrascripts %}
+<script>
+  $('#id_was_the_bid_successful_2').click(function(){
+      $(".hide").show();
+  });
+
+  $('#id_was_the_bid_successful_1').click(function(){
+      document.getElementById('extraForm').style.display = 'none';
+  });
+
+</script>  
+{% endblock extrascripts %}
