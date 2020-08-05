@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+flake8 = "*"
 
 [packages]
 django = "*"
@@ -23,7 +24,6 @@ phonenumbers = "*"
 pandas = "*"
 numpy = "*"
 sqlalchemy = "*"
-django-filters = "*"
 django-filter = "*"
 redis = "*"
 reportlab = "*"
