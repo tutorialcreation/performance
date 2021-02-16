@@ -1,0 +1,34 @@
+{% extends '_layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+<div class="container">
+    <table class="table table-responsive">
+        <th>contact_person</th>
+        <th>position</th>
+        <th>personal_tel_no</th>
+        <th>personal_email</th>
+        <th>client</th>
+        <th>service_line</th>
+        {% for contact in contacts %}
+        <tr>
+            <td>{{contact.contact_name}}</td>
+            <td>{{contact.position}}</td>
+            <td>{{contact.personal_tel_no}}</td>
+            <td>{{contact.personal_email}}</td>
+            <td>{{contact.client}}</td>
+            <td>{{contact.service_line}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    
+</div>
+
+
+{% endblock content %}

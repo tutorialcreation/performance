@@ -33,6 +33,7 @@ urlpatterns = [
     path('tasks/invoice_assignment/', views.RequestInvoice.as_view(), name='invoice_assignment'),
     path('tasks/<int:pk>/extend/', views.ExtendDeadline.as_view(), name='task_extend'),
     path('tasks/bid_create/', views.TaskBidCreate.as_view(), name='task_bid_create'),
+    path('tasks/report_create/', views.ReportCreate.as_view(), name='report_create'),
     path('tasks/<int:pk>/bid/', views.TaskBid.as_view(), name='task_bid'),
     path('tasks/<int:pk>/rating/', views.Rating.as_view(), name='task_rating'),
     path('sub_tasks/<int:pk>/rating/', views.SubTaskRating.as_view(), name='subtask_rating'),

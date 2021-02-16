@@ -16,8 +16,10 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse,HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.template.loader import render_to_string
 from django.forms import ModelForm
 from django.conf import settings
+from django.template import Template
 from django.http.response import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
@@ -45,7 +47,8 @@ from taskmanager.models.tasks import (
     NotificationSet,
     TaskSource,
     BiddedTask,
-    BidOrAwardAnalyzer
+    BidOrAwardAnalyzer,
+    Report
 )
 
 from taskmanager.forms.taskforms import (
@@ -67,6 +70,7 @@ from taskmanager.forms.taskforms import (
     SuccessForm,
     TaskSourceForm,
     TaskBidForm,
+    ReportForm,
     SubTaskBidForm,
     SubTaskBidFormset,
     InvoicingForm
@@ -104,18 +108,20 @@ class TaskCreate(CreateView):
             self.object = form.save()
             if subtasks.is_valid():
                 subtasks.instance = self.object
-                # import pdb;pdb.set_trace()
                 subtasks.save()
 
                 subject = f'Task Notification'
                 tasks_send=[]
-                subs=subtasks.instance.subtask.filter(member_assigned=self.request.user)
+                get_members=[]
+                for member in subtasks.instance.subtask.all():
+                    get_members.append(member.member_assigned.id)
+                subs=subtasks.instance.subtask.filter(member_assigned_id__in=get_members)
+                site=self.request.build_absolute_uri('/task-master/my-tasks/')
                 for task in range(len(subs)):
-                    tasks_send.append(subs[task].name)
-                message = f'You have received the tasks: {tasks_send} ' \
-                          f';from the project {subtasks.instance.title} kindly check the system to view which task you have been allocated.'
-                # notification=NotificationSet.objects.filter(user=self.request.user).first()
-                # # import pdb;pdb.set_trace()
+                    tasks_send.append(f"{subs[task].name} assigned to {subs[task].member_assigned.username}")
+                message = f'Timesheet Data Tables:'
+                html_template='taskmanager/email.html'
+                html_content=render_to_string(html_template,{'taskset':subtasks.instance, 'site':site})
                 all_subtasks=subtasks.instance.subtask.all()
                 target_emails=[]
                 target_users=[]
@@ -123,7 +129,7 @@ class TaskCreate(CreateView):
                     target_emails.append(data.member_assigned.email)
                     target_users.append(data.member_assigned)
                 notify.send(self.request.user,recipient=target_users,verb=f"You have received a new task from the project {subtasks.instance.title}")
-                send_mail(subject,message,settings.FROM_EMAIL,target_emails)
+                send_mail(subject,message,settings.FROM_EMAIL,target_emails,html_message=html_content)
         return super(TaskCreate, self).form_valid(form)
 
 
@@ -158,6 +164,29 @@ class TaskBidCreate(CreateView):
         return super(TaskBidCreate, self).form_valid(form)
 
 
+class ReportCreate(CreateView):
+    '''
+    this task creation has formsets.
+    '''
+    model = Report
+    template_name = 'taskmanager/task_create.html'
+    form_class = ReportForm
+    success_message='You have succesfully extended the deadline. Thank you'
+    success_url = reverse_lazy('taskmanager:task_my_tasks')
+
+    def get_context_data(self, **kwargs):
+        data = super(ReportCreate, self).get_context_data(**kwargs)
+        data['reports'] = True
+        return data
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            form.instance.assigner = self.request.user 
+            if form.is_valid():
+                form.save()
+        return super(ReportCreate, self).form_valid(form)
+
+
 class TaskUpdate(BSModalUpdateView):
     model = Task
     template_name = 'taskmanager/task_create_edit.html'
@@ -174,25 +203,29 @@ class TaskUpdate(BSModalUpdateView):
             data['subtasks'] = SubTaskUpdateFormset(instance=self.object)
         return data
 
-    def form_valid(self, form):
-        context = self.get_context_data()
-        subtasks = context['subtasks']
-        with transaction.atomic():
-            self.object = form.save()
-            if subtasks.is_valid():
-                subtasks.instance = self.object
-                subtasks.save()
-        return super(TaskUpdate, self).form_valid(form)
-
     def post(self, request, *args, **kwargs):
         data = self.request.POST
+        task_id=kwargs.get('pk')
+        task=Task.objects.get(id=task_id)
+        task.title=request.POST.get('title')
+        assignment_typeset=Task.objects.get(id=request.POST.get('assignment_typeset'))
+        task.assignment_typeset=assignment_typeset
+        teams=Team.objects.get(id=request.POST.get('team'))
+        task.team=teams
+        task.client_name=request.POST.get('client_name')
+        task.due_date=request.POST.get('due_date')
+        task.save()
         for item in data:
             if item.startswith("subtask-") and item.endswith("-id") and data[item]:
                 id_ = data[item]
                 date_key = "subtask-{}-task_due_date".format(item.split("-")[1])
+                member_key="subtask-{}-member_assigned".format(item.split("-")[1])
                 task_due_date = data[date_key]
+                member_assigned=data[member_key]
+                member_assigned=User.objects.get(id=member_assigned)
                 subtask=SubTask.objects.get(pk=id_)
                 subtask.task_due_date=task_due_date
+                subtask.member_assigned=member_assigned
                 subtask.save()
         return redirect('taskmanager:task_my_tasks')
 
@@ -625,8 +658,9 @@ def task_mark_completed(request, task_id):
             subtask.status = 'COMP'
             subtask.completed_date = datetime.date.today()
             subtask.save()
+            site=request.build_absolute_uri('/task-master/my-tasks/')
             subject = f'Task Notification'
-            message = f'The task {subtask.name} has been completed . And is ready for review'
+            message = f'The task {subtask.name} has been completed . And is ready for review go to site {site}'
             target_email=[task.assigned_to.first().email]
             send_mail(subject,message,settings.FROM_EMAIL,target_email)
             messages.success(request, "The task has been successfully marked as completed. Thank you!")

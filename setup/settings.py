@@ -104,6 +104,7 @@ TEMPLATES = [
                 'taskmanager.context_processors.get_subtask_analysis',
                 'taskmanager.context_processors.get_notifications',
                 'leave.context_processors.get_leaves',
+                'crm.context_processors.existing_filters',
             ],
         },
     },
@@ -204,17 +205,13 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'hesbon.maiyo@actserv.co.ke')
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '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')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','Hesbon5600')
-FROM_EMAIL ="brooks-no-reply@actserv.co.ke"
+EMAIL_HOST_USER='martin.bironga@actserv.co.ke'
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT=587
+EMAIL_HOST_PASSWORD="luther1996-"
+EMAIL_USE_TLS=True
+FROM_EMAIL="brooks-no-reply@actserv.co.ke"
 DEFAULT_FROM_EMAIL="brooks-no-reply@actserv.co.ke"
-EMAIL_USE_TLS = True
-EMAIL_SENDER = 'hesbon.dev@gmail.com'
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=7
 ACCOUNT_EMAIL_REQUIRED = True
@@ -269,6 +266,16 @@ CHANNEL_LAYERS = {
     },
 }
 
-TWILIO_ACCOUNT_SID='ACf12a703b1e1be2ed9f271e7a18bc8f87'
-TWILIO_AUTH_TOKEN='58a4638655f0210c42f128caa8d4b57b'
-TWILIO_NUMBER='+17609708434'
+# TWILIO_ACCOUNT_SID=os.getenv('TWILIO_ACCOUNT_SID')
+# TWILIO_AUTH_TOKEN=os.getenv('TWILIO_AUTH_TOKEN')
+# TWILIO_NUMBER=os.getenv('TWILIO_NUMBER')
+
+TWILIO_ACCOUNT_SID='AC3fd1c3ab318411d910a33ae4942dcf82'
+TWILIO_AUTH_TOKEN='c898a21af31f6e580d0c3bad0bed6235'
+TWILIO_NUMBER='+254 20 3893134'
+
+
+
+
+
+

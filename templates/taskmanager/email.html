@@ -1,0 +1,39 @@
+<div class="container">
+<p>Timesheet for {{taskset.title}}</p>
+
+    <table style="border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        font-family: sans-serif;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);">
+    <thead>
+        <tr style="background-color: #009879;
+        color: #ffffff;
+        text-align: left;">
+            <th>Subtask Details</th>
+            <th>Client</th>
+            <th>Project</th>
+            <th>Deadline For Project</th>
+        </tr>
+    </thead>
+    <tbody style="border-bottom: 2px solid #009879;">
+        <tr style="border-bottom: 1px solid #dddddd;">
+            <td style="padding: 12px 15px;">
+                <ul>
+                    {% for subtask in taskset.subtask.all %}
+                    <li>
+                        {{subtask}} assigned to {{subtask.member_assigned}} due by {{subtask.task_due_date}}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td style="padding: 12px 15px;">{{taskset.client_name}}</td>
+            <td style="padding: 12px 15px;">{{taskset.title}}</td>
+            <td style="padding: 12px 15px;">{{taskset.due_date}}</td>
+        </tr>
+    </tbody>
+    </table>
+
+    <p>Go to system: {{site}}</p>
+</div>
