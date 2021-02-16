@@ -5,7 +5,7 @@ from .models import (
     SubTaskAnalysis,
     DateRanges,NotificationSet,
     TaskSource,BidOrAwardAnalyzer,
-    BiddedTask,InvoiceDetail
+    BiddedTask,InvoiceDetail,Report
 )
 
 class TaskAdmin(admin.ModelAdmin):
@@ -25,3 +25,4 @@ admin.site.register(TaskSource)
 admin.site.register(BidOrAwardAnalyzer)
 admin.site.register(BiddedTask)
 admin.site.register(InvoiceDetail)
+admin.site.register(Report)

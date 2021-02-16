@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 {% load crispy_forms_tags %}
 {% load notifications_tags %}
 <!DOCTYPE html>
@@ -46,7 +46,30 @@
 </head>
 
 <body id="page-top">
-  
+    <style>
+        .sidebar-dark .nav-item .nav-link[data-toggle="collapse"]::after {
+            color: #3a3b45;
+        }
+
+        .bg-gradient-success {
+            background-color: #3a3b45;
+            background-image: linear-gradient( 180deg, #f8f9fc 10%, #f8f9fc 100%);
+            background-size: cover;
+        }
+
+        .sidebar-dark .sidebar-brand {
+            color: #3a3b45;
+        }
+
+        .sidebar-dark .nav-item .nav-link {
+            color: #3a3b45;
+        }
+
+        *, *:before, *:after {
+            box-sizing: inherit;
+            color: black;
+        }
+    </style>
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -96,6 +119,19 @@
             <a class="collapse-item" href="{% url 'taskmanager:team_create' %}">Team Create</a>
             {% endif %}
             <a class="collapse-item" href="{% url 'taskmanager:task_my_tasks' %}">Task Manager</a>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReport" aria-expanded="true" aria-controls="collapseReport">
+          <i class="fas fa-fw fa-cog"></i>
+          <span>Reports</span>
+        </a>
+        <div id="collapseReport" class="collapse" aria-labelledby="headingReport" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="collapse-header">Report Classifier:</h6>
+            <a class="collapse-item" href="{% url 'taskmanager:report_create' %}">Generate Report</a>
           </div>
         </div>
       </li>
@@ -152,14 +188,16 @@
       {% if request.user.is_superuser %}
       <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCRM" aria-expanded="true" aria-controls="collapseUtilities">
-          <i class="fas fa-fw fa-phone"></i>
+          <i class="fa fa-comment"></i>
           <span>CRM Component</span>
         </a>
         <div id="collapseCRM" class="collapse" aria-labelledby="headingCRM" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="ml-2"> <i class="fa fa-phone"></i></h6>
+            <h6 class="ml-2"> <i class="fa fa-comment"></i></h6>
             <a class="collapse-item" href="{% url 'crm:client_create' %}">Add Clients</a>
+            <a class="collapse-item" href="{% url 'crm:clients' %}">Clients</a>
             <a class="collapse-item" href="{% url 'crm:contact_create' %}">Add Contact Persons</a>
+            <a class="collapse-item" href="{% url 'crm:contacts' %}">Contacts Persons</a>
 			<a class="collapse-item" href="{% url 'crm:communications' %}">Communications</a>
           </div>
         </div>
@@ -625,13 +663,15 @@
     });
     
     $(document).ready(function() {
-        $('#acceptTask').DataTable();
-        $('#ongoingTask').DataTable();
-        $('#completeTask').DataTable();
-        $('#taskReview').DataTable();
-        $('#workRatesTable').DataTable();
-        $('#unsuccessfulBids').DataTable();
-        $('#successfulBids').DataTable();
+        $('#acceptTaskTable').DataTable();
+        $('#ongoingTaskTable').DataTable();
+        $('#completeTaskTable').DataTable();
+        $('#taskReviewTable').DataTable();
+        $('#taskProjectsTable').DataTable();
+        $('#taskReviewSuperTable').DataTable();
+        $('#workRatesTableTable').DataTable();
+        $('#unsuccessfulBidsTable').DataTable();
+        $('#successfulBidsTable').DataTable();
     } );
 
 

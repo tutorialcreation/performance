@@ -18,6 +18,9 @@ class ClientForms(forms.ModelForm):
             'twitter_account',
             'instagram_account',
             'linkedin_account',
+            'nature_of_assignment',
+            'contract_period',
+            'final_proposal_amounts',
         ]
     def __init__(self, *args, **kwargs):
         super(ClientForms, self).__init__(*args, **kwargs)
@@ -38,6 +41,9 @@ class ClientForms(forms.ModelForm):
                 Field('twitter_account'),
                 Field('instagram_account'),
                 Field('linkedin_account'),
+                Field('nature_of_assignment'),
+                Field('contract_period'),
+                Field('final_proposal_amounts'),
                 Div(
                     ButtonHolder(Submit('submit', 'submit')),
                 )
@@ -59,6 +65,7 @@ class ContactForms(forms.ModelForm):
             'personal_status',
             'client',
             'service_line',
+
         ]
 
     def __init__(self, *args, **kwargs):
@@ -84,3 +91,6 @@ class ContactForms(forms.ModelForm):
                     ButtonHolder(Submit('submit', 'submit')),
                 )
             )
+
+
+

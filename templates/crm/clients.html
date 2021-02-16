@@ -1,0 +1,50 @@
+{% extends '_layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+<div class="container">
+    <table class="table table-responsive">
+        <th>Client</th>  
+        <th>Country</th>
+        <th>client_tel_no</th>
+        <th>client_email</th>
+        <th>client_location</th>
+        <th>client_postal_address</th>
+        <th>client_status</th>
+        <th>nature_of_assignment</th>
+        <th>contract_period</th>
+        <th>final_proposal_amounts</th>
+        <th>contact_person</th>
+        {% for client in clients %}
+        <tr>
+            <td>{{client.client_name}}</td>
+            <td>{{client.country}}</td>
+            <td>{{client.client_tel_no}}</td>
+            <td>{{client.client_email}}</td>
+            <td>{{client.client_location}}</td>
+            <td>{{client.client_postal_address}}</td>
+            <td>{{client.get_client_status_display}}</td>
+            <td>{{client.nature_of_assignment}}</td>
+            <td>{{client.contract_period}}</td>
+            <td>{{client.final_proposal_amounts}}</td>
+            <td>
+                <ul>
+                {% for contact in client.contactmanager_set.all %}
+                 <li>{{contact.contact_name}}</li>
+                {% endfor %}
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    
+</div>
+
+
+{% endblock content %}

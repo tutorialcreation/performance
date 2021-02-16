@@ -65,6 +65,7 @@ def login_view(request):
 	work on me - needs messages and redirects
 	
 	'''
+	# if request.user:
 	login_user = request.user
 	if request.method == 'POST':
 		form = UserLogin(data = request.POST)

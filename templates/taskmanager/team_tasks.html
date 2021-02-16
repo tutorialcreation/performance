@@ -67,7 +67,7 @@
                     <div class="card-body">
                         <p>You have {{ tasks.count }} task(s) that are yet to be accepted!</p>
                         {% if tasks %}
-                        <table id="acceptTask" class="table table-bordered table-striped table-hover">
+                        <table id="acceptTaskTable" class="table table-bordered table-striped table-hover">
                           <thead><!--head of first table-->
                           <tr class="bg-success text-white">
                             <th>Project Name</th>
@@ -170,7 +170,7 @@
                       <p>{{tasks_inprogress.count}} tasks are ongoing </p>
                       
                       {% if tasks_inprogress %}
-                      <table id="ongoingTask" class="table table-bordered table-striped table-hover">
+                      <table id="ongoingTaskTable" class="table table-bordered table-striped table-hover">
                         <thead><!-- beginning of second table head -->
                         <tr class="bg-success text-white">
                           <th>Project Name</th>
@@ -270,7 +270,7 @@
                   <div class="card-body">
                     <p></p>
                     {% if completed_tasks %}
-                    <table id="completeTask" class="table table-bordered table-striped table-hover">
+                    <table id="completeTaskTable" class="table table-bordered table-striped table-hover">
                       <thead><!-- beginning of third table head -->
                       <tr class="bg-success text-white">
                         <th>Project Name</th>
@@ -348,7 +348,7 @@
                       and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
                     </p>
                     {% if completed_tasks %}
-                    <table id="taskReview" class="table table-bordered table-striped table-hover">
+                    <table id="taskReviewTable" class="table table-bordered table-striped table-hover">
                       <thead><!--beginning of fourth table head-->
                       <tr class="bg-success text-white">
                         <th>Project Name</th>
@@ -439,7 +439,7 @@
                   <div class="card-body">
                     
                     {% if tasks %}
-                    <table id="taskReview" class="table table-bordered table-striped table-hover">
+                    <table id="taskProjectsTable" class="table table-bordered table-striped table-hover">
                       <thead><!--beginning of fifth table head-->
                       <tr class="bg-success text-white">
                         <th>Project Name</th>

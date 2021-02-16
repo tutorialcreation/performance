@@ -4,6 +4,8 @@ import uuid
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from crm.models import ClientManager
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save,pre_save,post_init,pre_init
 from django.dispatch import receiver
 from django.contrib.postgres.fields import ArrayField
@@ -207,6 +209,7 @@ class SubTask(models.Model):
     revised_due_date=models.DateField(null=True,blank=True)
     rating=models.IntegerField(choices=RATING_RANGE,null=True, blank=True)
     content=models.CharField('comments',max_length=500,null=True,blank=True)
+    
 
     def __str__(self):
         return self.name
@@ -461,3 +464,23 @@ class InvoiceDetail(models.Model):
 
     def __str__(self):
         return f"{self.project.title}_{self.invoice_number}"
+
+
+
+
+
+class Report(models.Model):
+    date_contracted=models.DateField()
+    date_final_data_received=models.DateField()
+    date_frist_draft_report=models.DateField()
+    date_final_report=models.DateField()
+    comments=models.CharField(max_length=10000,blank=True,null=True)
+    client=models.ForeignKey(ClientManager,on_delete=models.CASCADE,null=True,blank=True)
+    assigner=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True,related_name="+")
+    assignee=models.ManyToManyField(User)
+    task=models.ForeignKey(Task,on_delete=models.CASCADE,null=True,blank=True)
+    subtasks=models.ForeignKey(SubTask,on_delete=models.CASCADE,null=True,blank=True)
+
+    def __str__(self):
+        return self.comments
+

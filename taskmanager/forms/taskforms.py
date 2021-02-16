@@ -9,7 +9,7 @@ from crispy_forms.helper import FormHelper
 from taskmanager.models import (
     Task,TaskReview,SubTask,Team,
     TaskSource,BidOrAwardAnalyzer,BiddedTask,
-    InvoiceDetail
+    InvoiceDetail,Report
 )
 from crispy_forms.helper import FormHelper
 from crispy_forms.bootstrap import TabHolder,Tab
@@ -138,6 +138,48 @@ class TaskBidForm(forms.ModelForm):
                 )
             )
 
+class ReportForm(forms.ModelForm):
+
+    class Meta:
+        model = Report
+        fields = (
+            'date_contracted',
+            'date_final_data_received',
+            'date_frist_draft_report',
+            'date_final_report',
+            'comments',
+            'client',
+            'assigner',
+            'assignee',
+            'task',
+            'subtasks',
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(ReportForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_tag = True
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3 create-label'
+        self.helper.field_class = 'col-md-9'
+        self.helper.layout = Layout(
+                Div(
+                    Field('date_contracted'),
+                    Field('date_final_data_received'),
+                    Field('date_frist_draft_report'),
+                    Field('date_final_report'),
+                    Field('comments'),
+                    Field('client'),
+                    Field('assigner'),
+                    Field('assignee'),
+                    Field('task'),
+                    Field('subtasks'),
+                    HTML("<br>"),
+                    ButtonHolder(Submit('submit', 'submit')),
+                )
+            )
+
 
 class ReturnForm(forms.ModelForm):
 
@@ -247,7 +289,7 @@ class SubTaskUpdateForm(forms.ModelForm):
         model = SubTask
         exclude = ()
 
-SubTaskUpdateFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date'],extra=1,can_delete=True)
+SubTaskUpdateFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date','member_assigned'],extra=1,can_delete=True)
 
 class SubTaskExtendForm(forms.ModelForm):
 
