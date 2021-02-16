@@ -247,7 +247,7 @@ class SubTaskUpdateForm(forms.ModelForm):
         model = SubTask
         exclude = ()
 
-SubTaskUpdateFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date'],extra=1,can_delete=True)
+SubTaskUpdateFormset=inlineformset_factory(Task,SubTask,form=SubTaskUpdateForm, fields=['name','task_due_date','member_assigned'],extra=1,can_delete=True)
 
 class SubTaskExtendForm(forms.ModelForm):
 

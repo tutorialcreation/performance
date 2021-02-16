@@ -40,7 +40,7 @@
           <div id="collapseToAccept" class="collapse show" aria-labelledby="toAccept" data-parent="#accordion">
           <div class="card-body">
               {% if tasks %}
-              <table id="acceptTask" class="table table-bordered table-striped table-hover">
+              <table id="acceptTaskTable" class="table table-bordered table-striped table-hover">
                 <thead><!--head of first table-->
                 <tr class="bg-success text-white">
                   <th>Project Name</th>
@@ -129,7 +129,7 @@
           <div id="collapseOngoingTasks" class="collapse" aria-labelledby="ongoingTasks" data-parent="#accordion"><!--- beginning of second collapse -->
           <div class="card-body">
             {% if tasks_inprogress %}
-            <table id="ongoingTask" class="table table-bordered table-striped table-hover">
+            <table id="ongoingTaskTable" class="table table-bordered table-striped table-hover">
               <thead><!-- beginning of second table head -->
               <tr class="bg-success text-white">
                 <th>Project Name</th>
@@ -216,7 +216,7 @@
         <div id="collapseCompletedTasks" class="collapse" aria-labelledby="completedTasks" data-parent="#accordion"><!--- beginning of third collapse -->
         <div class="card-body">
           {% if completed_or_approved_tasks %}
-          <table id="completeTask" class="table table-bordered table-striped table-hover">
+          <table id="completeTaskTable" class="table table-bordered table-striped table-hover">
             <thead><!-- beginning of third table head -->
             <tr class="bg-success text-white">
               <th>Project Name</th>
@@ -325,7 +325,7 @@
             and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
           </p> -->
           {% if completed_tasks %}
-          <table id="taskReview" class="table table-bordered table-striped table-hover">
+          <table id="taskReviewSuperTable" class="table table-bordered table-striped table-hover">
             <thead><!--beginning of fourth table head-->
             <tr class="bg-success text-white">
               <th>Project Name</th>
@@ -422,7 +422,7 @@
             and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
           </p> -->
           {% if taskset %}
-          <table id="taskReview" class="table table-bordered table-striped table-hover">
+          <table id="taskReviewTable" class="table table-bordered table-striped table-hover">
             <thead><!--beginning of fifth table head-->
             <tr class="bg-success text-white">
               <th>Project Name</th>
@@ -507,7 +507,7 @@
             and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
           </p> -->
           {% if successful_bids %}
-          <table id="successfulBids" class="table table-bordered table-striped table-hover">
+          <table id="successfulBidsTable" class="table table-bordered table-striped table-hover">
             <thead><!--beginning of sixth table head-->
             <tr class="bg-success text-white">
               <th>Project Name</th>
@@ -583,7 +583,7 @@
             and {{tasks.count}} task(s) are waiting to be reviewed for reassignment.
           </p> -->
           {% if unsuccessful_bids %}
-          <table id="unsuccessfulBids" class="table table-bordered table-striped table-hover">
+          <table id="unsuccessfulBidsTable" class="table table-bordered table-striped table-hover">
             <thead><!--beginning of fifth table head-->
             <tr class="bg-success text-white">
               <th>Project Name</th>

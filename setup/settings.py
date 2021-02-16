@@ -104,6 +104,7 @@ TEMPLATES = [
                 'taskmanager.context_processors.get_subtask_analysis',
                 'taskmanager.context_processors.get_notifications',
                 'leave.context_processors.get_leaves',
+                'crm.context_processors.existing_filters',
             ],
         },
     },
@@ -204,17 +205,24 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = os.getenv('EMAIL_PORT', 587)
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'hesbon.maiyo@actserv.co.ke')
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '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')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','Hesbon5600')
-FROM_EMAIL ="brooks-no-reply@actserv.co.ke"
-DEFAULT_FROM_EMAIL="brooks-no-reply@actserv.co.ke"
+
+# EMAIL_HOST = 'smtp.sendgrid.net'
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD','')
+# EMAIL_PORT = 587
+# SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY', '')
+# FROM_EMAIL ="lutherlunyamwi@gmail.com"
+# DEFAULT_FROM_EMAIL="lutherlunyamwi@gmail.com"
 EMAIL_USE_TLS = True
-EMAIL_SENDER = 'hesbon.dev@gmail.com'
 EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
 
+EMAIL_SENDER='hesbon.dev@gmail.com'
+EMAIL_HOST_USER='hesbon.maiyo@actserv.co.ke'
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_HOST_PASSWORD="Hesbon5600"
+FROM_EMAIL="brooks-no-reply@actserv.co.ke"
+DEFAULT_FROM_EMAIL="brooks-no-reply@actserv.co.ke"
+SENDGRID_API_KEY="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"
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=7
 ACCOUNT_EMAIL_REQUIRED = True
@@ -269,6 +277,6 @@ CHANNEL_LAYERS = {
     },
 }
 
-TWILIO_ACCOUNT_SID='ACf12a703b1e1be2ed9f271e7a18bc8f87'
-TWILIO_AUTH_TOKEN='58a4638655f0210c42f128caa8d4b57b'
-TWILIO_NUMBER='+17609708434'
+TWILIO_ACCOUNT_SID='ACd192fb756af3eafc6df4245b131f136b'
+TWILIO_AUTH_TOKEN='35f429921f1b47eaa1f517b798cecabf'
+TWILIO_NUMBER='+13126464325'

@@ -1,6 +1,88 @@
 {% extends '_layout.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-<a href="{% url 'crm:send_bulk_sms' %}" class="btn btn-primary"> Send Bulk Sms.</a>
-<a href="{% url 'crm:send_mass_email' %}" class="btn btn-primary"> Send Mass Email.</a>
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+<div class="row">
+    <div class="col-1">
+        <div class="container m-5">
+            <a href="{% url 'crm:communications' %}"><i class="fa fa-home" aria-hidden="true"></i>CRM</a><hr>
+            <b>Recent Searches</b>
+            <ul>
+                {% for filter in existing_filters %}
+                <li><a href="{% url 'crm:use_existing_filter' filter.n %}">{{filter.search_parameter}}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-11">
+        
+        <div class="container">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link" aria-current="page" href="{% url 'crm:filter_params' %}">Filters <i class="fa fa-filter" aria-hidden="true"></i></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'crm:send_mass_email' %}" role="button" aria-expanded="false">Emails <i class="fa fa-envelope" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'crm:send_mass_email' %}">Send Emails </a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="#">Separated link</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'crm:send_bulk_sms' %}" role="button" aria-expanded="false">Sms <i class="fa fa-comment" aria-hidden="true"></i></a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="{% url 'crm:send_bulk_sms' %}">Send Sms</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><a class="dropdown-item" href="#">Separated link</a></li>
+                    </ul>
+                </li>
+              </ul>
+            {% if communications %}
+            <div class="card text-center">
+                <div class="card-header">
+                  Communications Module
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">How to use the communications module:</h5>
+                    <p class="card-text">Begin by clicking the <a href="{% url 'crm:filter_params' %}">filters</a>  tab in order to begin processing your <a href="{% url 'crm:filter_params' %}">filters</a> </p>
+                    <p class="card-text">After processing filters you can choose to send an <a href="{% url 'crm:send_mass_email' %}">email</a>  or <a href="{% url 'crm:send_bulk_sms' %}">sms</a></p>
+                    <p class="card-text">Recent Searches show up alongside in order to simplify your filter process</p>
+                </div>
+              </div>
+            {% elif filters %}
+            <form action="{% url 'crm:filter_params' %}" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="process filters" class="btn-sm btn-success">
+            </form>
+            {% elif emails %}
+            <form action="{% url 'crm:send_mass_email' %}" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="send emails" class="btn-sm btn-success">
+            </form>    
+            {% elif sms %}
+            <form action="{% url 'crm:send_bulk_sms' %}" method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <input type="submit" value="send sms" class="btn-sm btn-success">
+            </form>
+            {% endif %}
+               
+           
+       </div>
+    </div>
+</div>
+
+
 {% endblock %}
