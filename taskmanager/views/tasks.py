@@ -227,6 +227,20 @@ class TaskUpdate(BSModalUpdateView):
                 subtask.task_due_date=task_due_date
                 subtask.member_assigned=member_assigned
                 subtask.save()
+            elif not data[item]:
+                name="subtask-{}-name".format(item.split("-")[1])
+                date_key = "subtask-{}-task_due_date".format(item.split("-")[1])
+                member_key="subtask-{}-member_assigned".format(item.split("-")[1])
+                member_assigned=data[member_key]
+                member_assigned=User.objects.get(id=member_assigned)
+                new_subtask=SubTask()
+                new_subtask.name=data[name]
+                new_subtask.task_due_date=data[date_key]
+                new_subtask.member_assigned=member_assigned
+                new_subtask.status="PLAN"
+                new_subtask.task_id=task.id
+                new_subtask.save()
+
         return redirect('taskmanager:task_my_tasks')
 
 
