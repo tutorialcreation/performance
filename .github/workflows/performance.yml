@@ -85,7 +85,7 @@ jobs:
             export EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
             pipenv run python manage.py makemigrations
             pipenv run python manage.py migrate
-            pipenv run python manage.py collectstatic --no-input
+            cat <(echo "yes") - | pipenv run python manage.py collectstatic 
             echo "$PASSWORD" | sudo -S systemctl restart performance.service
             echo "$PASSWORD" | sudo -S systemctl restart nginx.service
 
