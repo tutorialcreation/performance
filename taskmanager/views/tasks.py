@@ -127,8 +127,8 @@ class TaskCreate(CreateView):
                 target_users=[]
                 for data in all_subtasks:
                     target_emails.append(data.member_assigned.email)
-                    target_users.append(data.member_assigned)
                 notify.send(self.request.user,recipient=target_users,verb=f"You have received a new task from the project {subtasks.instance.title}")
+                target_users.append(data.member_assigned)
                 send_mail(subject,message,settings.FROM_EMAIL,target_emails,html_message=html_content)
         return super(TaskCreate, self).form_valid(form)
 
