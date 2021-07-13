@@ -77,8 +77,8 @@ class Task(models.Model):
         ('INV',   'Invoiced')
     )
     DEFAULT_ASSIGMENT_TYPE=1
-    title = models.CharField('Project Name',max_length=50,null=True)
-    assignment_type=models.CharField('*',max_length=50,null=True,blank=True,)
+    title = models.CharField('Project Name',max_length=1220,null=True)
+    assignment_type=models.CharField('*',max_length=1220,null=True,blank=True,)
     assignment_typeset=models.ForeignKey('self',on_delete=models.CASCADE,null=True,verbose_name='Project Type',blank=True)
     desc = models.TextField(default="test", max_length=1024, null=True,blank=True)
     sub_tasks=JSONField(null=True,blank=True)
