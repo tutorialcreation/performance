@@ -7,7 +7,7 @@ verify_ssl = true
 flake8 = "*"
 
 [packages]
-django = "==3.0.1"
+django = "==3.1.13"
 django-bootstrap3-multidatepicker = "*"
 django-bootstrap-modal-forms = "*"
 django-bootstrap3 = "*"
