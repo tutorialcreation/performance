@@ -18,8 +18,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
-import notifications.urls
-from django.conf.urls import url
 from . import views
 
 urlpatterns = [
@@ -29,11 +27,9 @@ urlpatterns = [
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('task-master/', include('taskmanager.urls')),
     path('reports/', include('reports.urls', namespace='reports')),
-    path('webpush/', include('webpush.urls')),
     path('select2/', include('django_select2.urls')),
     path('bs_index/',views.bootstrap_index),
     path('crm/',include('crm.urls',namespace='crm')),
-    re_path(r'^inbox/notifications/',include('notifications.urls',namespace='notifications')),
 
     # path('accounts/', include('allauth.urls')),
 ]

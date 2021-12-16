@@ -8,8 +8,6 @@ from crm.models import ClientManager
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save,pre_save,post_init,pre_init
 from django.dispatch import receiver
-from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.fields import JSONField
 from django.utils import timezone
 from django.db.models.signals import post_save,post_init
 from django.dispatch import receiver
@@ -81,7 +79,6 @@ class Task(models.Model):
     assignment_type=models.CharField('*',max_length=1220,null=True,blank=True,)
     assignment_typeset=models.ForeignKey('self',on_delete=models.CASCADE,null=True,verbose_name='Project Type',blank=True)
     desc = models.TextField(default="test", max_length=1024, null=True,blank=True)
-    sub_tasks=JSONField(null=True,blank=True)
     client_code = models.TextField(default="test", max_length=1024, null=True,blank=True)
     client_name = models.CharField('Client',max_length=50,null=True)
     status = models.CharField(max_length=4, choices=STATUS_CHOICES, default='PLAN',null=True)

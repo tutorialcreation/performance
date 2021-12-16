@@ -3,8 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.forms import Textarea
-from django_select2.forms import ModelSelect2Widget, Select2MultipleWidget, Select2Widget
-from django_bootstrap3_multidatepicker.django_bootstrap3_multidatepicker import widgets, fields
+
 from bootstrap_modal_forms.mixins import PopRequestMixin, CreateUpdateAjaxMixin
 from bootstrap_modal_forms.forms import BSModalForm
 

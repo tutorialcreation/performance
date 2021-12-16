@@ -50,12 +50,10 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'rest_framework',
     'widget_tweaks',
-    'webpush',
     'mathfilters',
     'django_extensions',
     'django_select2',
     'django_filters',
-    'notifications',
 
     # PROJECT APPS
     'dashboard',
@@ -114,16 +112,23 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = { 
-	'default': {
-		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': os.getenv('DB_NAME', 'performance'),
-		'PASSWORD': os.getenv('DB_PASSWORD', 'luther1996-'),
-		'HOST': os.getenv('DB_HOST', 'localhost'),
-		'USER': os.getenv('DB_USER', 'postgres'),
-		'PORT': os.getenv('DB_PORT', 5432),
-	 }
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+else:
+    DATABASES = { 
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('DB_NAME', 'performance'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'luther1996-'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PORT': os.getenv('DB_PORT', 5432),
+        }
 
 	 
     
@@ -159,11 +164,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": "BE-PoVEuQGI-OUPkpphW1ivIj2A6SskYXRn9v7cJk6bMDr8BAXVIqqg478x3OMh8ON-tkp-vlHW7-y3NwxYle9o",
-    "VAPID_PRIVATE_KEY": "qnfCLlhFxXoFlVjmTbQAeMs7zZrNGXZxd9GLSH8vqJc",
-    "VAPID_ADMIN_EMAIL": "tutorialcreation81@gmail.com"
-}
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 

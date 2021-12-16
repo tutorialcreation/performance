@@ -28,13 +28,10 @@ from django.forms import formset_factory
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Func
 from django.db import transaction
-from notifications.models import Notification
-from notifications.signals import notify
 from bootstrap_modal_forms.generic import (BSModalCreateView,
                                            BSModalUpdateView,
                                            BSModalReadView,
                                            BSModalDeleteView)
-from webpush import send_user_notification
 from setup import celery_app
 
 
@@ -129,8 +126,7 @@ class TaskCreate(CreateView):
                 target_users = []
                 for data in all_subtasks:
                     target_emails.append(data.member_assigned.email)
-                notify.send(self.request.user, recipient=target_users,
-                            verb=f"You have received a new task from the project {subtasks.instance.title}")
+                
                 target_users.append(data.member_assigned)
                 send_mail(subject, message, settings.FROM_EMAIL,
                           target_emails, html_message=html_content)

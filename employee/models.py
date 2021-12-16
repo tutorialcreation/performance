@@ -3,7 +3,7 @@ from employee.utility import code_format
 from django.db import models
 from employee.managers import EmployeeManager
 from phonenumber_field.modelfields import PhoneNumberField
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.auth.models import User
 from leave.models import Leave
 

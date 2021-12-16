@@ -7,7 +7,7 @@ from bootstrap_modal_forms.forms import BSModalForm
 from crispy_forms.helper import FormHelper
 from crispy_forms import layout, bootstrap
 from pams_system.utils.fields import MultipleChoiceTreeField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from pams_system.models.kpis import *
 

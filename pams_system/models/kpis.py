@@ -3,7 +3,7 @@ from pams_system.models.maps import MapList, MapType
 from pams_system.models.levels import InputData, MainLevel, Level, KPIWeightings
 from django.contrib.auth.models import User
 from mptt.models import MPTTModel, TreeForeignKey
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class MainKpis(models.Model):
