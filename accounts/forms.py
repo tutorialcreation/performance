@@ -10,7 +10,7 @@ class UserAddForm(UserCreationForm):
 	Extending UserCreationForm - with email
 
 	'''
-	email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'eg.edwards@Actservgroup.com'}))
+	email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder':'eg.edwards@performancegroup.com'}))
 
 	class Meta:
 		model = User
@@ -21,10 +21,10 @@ class UserAddForm(UserCreationForm):
 		email = self.cleaned_data['email']
 		qry = User.objects.filter(email = email)
 
-		domain_list = ['Actservgroup.com','Actservghana.com']
-		get_Actserv_domain = email.split('@')[1]#get me whatever after @, eg. gmail.com
+		domain_list = ['performancegroup.com','performanceghana.com']
+		get_performance_domain = email.split('@')[1]#get me whatever after @, eg. gmail.com
 
-		print(get_Actserv_domain in domain_list)
+		print(get_performance_domain in domain_list)
 
 		if qry.exists():
 			'''
@@ -33,7 +33,7 @@ class UserAddForm(UserCreationForm):
 			raise forms.ValidationError('email {0} already exists'.format(email))
 
 
-		elif get_Actserv_domain not in domain_list:
+		elif get_performance_domain not in domain_list:
 			print('test - not in domain')
 			raise forms.ValidationError('email does not contain domain')
 

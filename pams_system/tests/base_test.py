@@ -12,5 +12,5 @@ class BaseTest(TestCase):
 
     def create_maptype(self):
         maptype = MapType.objects.create(maplist_id=3,state='D',status='N',
-        maptype_name='Actserv Boundary Map', maptype_description='2022')
+        maptype_name='performance Boundary Map', maptype_description='2022')
         return maptype

@@ -13,12 +13,12 @@ server {
     listen  80;
     # listen [::]:80 default_server;
     # server_name [demo.com](http://demo.com);
-    server_name  performance-taskmanager.actserv.co.ke;
+    server_name  performance-taskmanager.performance.co.ke;
 
     listen 443 ssl;
     listen [::]:443 ssl;
-    ssl_certificate /etc/letsencrypt/live/performance-taskmanager.actserv.co.ke/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/performance-taskmanager.actserv.co.ke/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/performance-taskmanager.performance.co.ke/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/performance-taskmanager.performance.co.ke/privkey.pem;
 
     large_client_header_buffers 4 16k;
     client_max_body_size 4G;

@@ -146,11 +146,11 @@ def dashboard_employees_create(request):
 
 			# employee_email = instance.user.email
 			# email_subject = 'Humanly Access Credentials'
-			# email_message = 'You have been added to Actservgroup Staff List,username and password'
+			# email_message = 'You have been added to performancegroup Staff List,username and password'
 			# from_email = settings.EMAIL_HOST_USER
 			# to_email = [employee_email]
 			'''
-			Work on it - user@gmail.com & user@Actservgroup.com -> send Template
+			Work on it - user@gmail.com & user@performancegroup.com -> send Template
 			'''
 			# send_mail(
 			# 	email_subject,
@@ -743,7 +743,7 @@ def unreject_leave(request,id):
 
 
 
-# Actserv staffs leaves table user only
+# performance staffs leaves table user only
 def view_my_leave_table(request):
 	# work on the logics
 	if request.user.is_authenticated:

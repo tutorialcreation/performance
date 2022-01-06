@@ -11,7 +11,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Actserv Dashboard</title>
+  <title>Performance Dashboard</title>
 
   <!-- Custom fonts for this template-->
   <link href="https://fonts.googleapis.com/css?family=Anton|Russo+One" rel="stylesheet">
@@ -80,7 +80,7 @@
         <div class="sidebar-brand-icon">
           <i class="fas fa-home"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">  PAMS ACTSERV <sup>1</sup></div>
+        <div class="sidebar-brand-text mx-3">  PAMS performance <sup>1</sup></div>
       </a>
 
       <!-- Divider -->
@@ -206,6 +206,24 @@
 
       {% if request.user.is_superuser %}
       <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEmpManager" aria-expanded="true" aria-controls="collapseUtilities">
+          <i class="fas fa-fw fa-hand-o-right"></i>
+          <span>Employee Manager</span>
+        </a>
+        <div id="collapseEmpManager" class="collapse" aria-labelledby="headingLeaves" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded">
+            <h6 class="ml-2"> <i class="fa fa-hand-o-right"></i></h6>
+            <a class="collapse-item" href="{% url 'dashboard:employeecreate' %}">Add Employee</a>
+            <a class="collapse-item" href="{% url 'dashboard:employees' %}">View Employees</a>
+            
+          </div>
+        </div>
+      </li>
+      {% endif %}
+
+
+      {% if request.user.is_superuser %}
+      <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLeaves" aria-expanded="true" aria-controls="collapseUtilities">
           <i class="fas fa-fw fa-hand-o-right"></i>
           <span>Leave</span>
@@ -221,6 +239,7 @@
         </div>
       </li>
       {% endif %}
+
 
       <!-- Sidebar Toggler (Sidebar) -->
       <div class="text-center d-none d-md-inline">
@@ -522,7 +541,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Actserv IT Dept 2020</span>
+            <span>Copyright &copy; performance IT Dept 2020</span>
           </div>
         </div>
       </footer>

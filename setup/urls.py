@@ -21,7 +21,7 @@ from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),  # change url in production --> Actservsuits.com/_&_wysiwyg-suits_empty-link_url
+    path('admin/', admin.site.urls),  # change url in production --> performancesuits.com/_&_wysiwyg-suits_empty-link_url
     path('', views.index_view, name='home'),
     path('accounts/', include('accounts.urls', namespace='accounts')),
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
@@ -43,4 +43,4 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #
-admin.site.site_header = 'Actserv ADMINISTRATION'
+admin.site.site_header = 'performance ADMINISTRATION'

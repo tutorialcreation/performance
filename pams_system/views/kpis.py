@@ -547,7 +547,7 @@ def sending_results(request):
     message = request.POST.get('message', '')
     from_email = request.POST.get('from_email', '')
     if request.method == 'POST':
-        send_mail(subject, message, from_email, ['tutorialcreation81@gmail.com', 'martin.bironga@actserv.co.ke'])
+        send_mail(subject, message, from_email, ['tutorialcreation81@gmail.com', 'martin.bironga@performance.co.ke'])
         return render(request, 'kpis/stats_summary.html')
     return redirect('kpiValueIndex')
 
