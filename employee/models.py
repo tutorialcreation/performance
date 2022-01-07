@@ -284,8 +284,6 @@ class Employee(models.Model):
     GENDER = (
         (MALE, 'Male'),
         (FEMALE, 'Female'),
-        (OTHER, 'Other'),
-        (NOT_KNOWN, 'Not Known'),
     )
 
     MR = 'Mr'
@@ -316,57 +314,67 @@ class Employee(models.Model):
         (INTERN, 'Intern'),
     )
 
-    OLEVEL = 'O-LEVEL'
-    SENIORHIGH = 'Senior High'
-    JUNIORHIGH = 'Junior High'
-    TERTIARY = 'Tertiary'
     PRIMARY = 'Primary Level'
+    SECONDARY = 'Secondary Level'
+    TERTIARY = 'Tertiary'
     OTHER = 'Other'
 
     EDUCATIONAL_LEVEL = (
-        (SENIORHIGH, 'Senior High School'),
-        (JUNIORHIGH, 'Junior High School'),
         (PRIMARY, 'Primary School'),
+        (SECONDARY, 'High School'),
         (TERTIARY, 'Tertiary/University/Polytechnic'),
-        (OLEVEL, 'OLevel'),
         (OTHER, 'Other'),
     )
 
-    AHAFO = 'Ahafo'
-    ASHANTI = 'Ashanti'
-    BONOEAST = 'Bono East'
-    BONO = 'Bono'
-    CENTRAL = 'Central'
-    EASTERN = 'Eastern'
-    GREATER = 'Greater Accra'
-    NORTHEAST = 'North East'
-    NORTHERN = 'Northen'
-    OTI = 'Oti'
-    SAVANNAH = 'Savannah'
-    UPPEREAST = 'Upper East'
-    UPPERWEST = 'Upper West'
-    VOLTA = 'Volta'
-    WESTERNNORTH = 'Western North'
-    WESTERN = 'Western'
-
-    GHANA_REGIONS = (
-        (AHAFO, 'Ahafo'),
-        (ASHANTI, 'Ashanti'),
-        (BONOEAST, 'Bono East'),
-        (BONO, 'Bono'),
-        (CENTRAL, 'Central'),
-        (EASTERN, 'Eastern'),
-        (GREATER, 'Greater Accra'),
-        (NORTHEAST, 'Northen East'),
-        (NORTHERN, 'Northen'),
-        (OTI, 'Oti'),
-        (SAVANNAH, 'Savannah'),
-        (UPPEREAST, 'Upper East'),
-        (UPPERWEST, 'Upper West'),
-        (VOLTA, 'Volta'),
-        (WESTERNNORTH, 'Western North'),
-        (WESTERN, 'Western'),
-    )
+    KENYAN_COUNTIES = {
+        "001": "MOMBASA",
+        "002": "KWALE",
+        "003": "KILIFI",
+        "004": "TANA RIVER",
+        "005": "LAMU",
+        "006": "TAITA TAVETA",
+        "007": "GARISSA",
+        "008": "WAJIR",
+        "009": "MANDERA",
+        "010": "MARSABIT",
+        "011": "ISIOLO",
+        "012": "MERU",
+        "013": "THARAKA NITHI",
+        "014": "EMBU",
+        "015": "KITUI",
+        "016": "MACHAKOS",
+        "017": "MAKUENI",
+        "018": "NYANDARUA",
+        "019": "NYERI",
+        "020": "KIRINYAGA",
+        "021": "MURANG'A",
+        "022": "KIAMBU",
+        "023": "TURKANA",
+        "024": "WEST POKOT",
+        "025": "SAMBURU",
+        "026": "TRANS-NZOIA",
+        "027": "UASIN GICHU",
+        "028": "ELGEYO MARAKWET",
+        "029": "NANDI",
+        "030": "BARINGO",
+        "031": "LAIKIPIA",
+        "032": "NAKURU",
+        "033": "NAROK",
+        "034": "KAJIADO",
+        "035": "KERICHO",
+        "036": "BOMET",
+        "037": "KAKAMEGA",
+        "038": "VIHIGA",
+        "039": "BUNGOMA",
+        "040": "BUSIA",
+        "041": "SIAYA",
+        "042": "KISUMU",
+        "043": "HOMA BAY",
+        "044": "MIGORI",
+        "045": "KISII",
+        "046": "NYAMIRA",
+        "047": "NAIROBI",
+    }
 
     # PERSONAL DATA
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
@@ -385,7 +393,7 @@ class Employee(models.Model):
     email = models.CharField(
         _('Email (optional)'), max_length=255, default=None, blank=True, null=True)
     tel = PhoneNumberField(default='+233240000000', null=False, blank=False,
-                           verbose_name='Phone Number (Example +233240000000)', help_text='Enter number with Country Code Eg. +233240000000')
+                           verbose_name='Phone Number (Example +2540000000)', help_text='Enter number with Country Code Eg. +254000000')
     bio = models.CharField(_('Bio'), help_text='your biography,tell me something about yourself eg. i love working ...',
                            max_length=255, default='', null=True, blank=True)
     birthday = models.DateField(_('Birthday'), blank=False, null=False)
@@ -395,15 +403,15 @@ class Employee(models.Model):
         'Nationality'), on_delete=models.SET_NULL, null=True, blank=True, default=None)
     hometown = models.CharField(
         _('Hometown'), max_length=125, null=True, blank=True)
-    region = models.CharField(_('Region'), help_text='what region of the country(Ghana) are you from ?',
-                              max_length=20, default=GREATER, choices=GHANA_REGIONS, blank=False, null=True)
+    region = models.CharField(_('Region'), help_text='what region of the country(Kenya) are you from ?',
+                              max_length=20, default=KENYAN_COUNTIES['001'], choices=tuple(KENYAN_COUNTIES.items()), blank=False, null=True)
     residence = models.CharField(
         _('Current Residence'), max_length=125, null=False, blank=False)
     address = models.CharField(
         _('Address'), help_text='address of current residence', max_length=125, null=True, blank=True)
 
     education = models.CharField(_('Education'), help_text='highest educational standard ie. your last level of schooling',
-                                 max_length=20, default=SENIORHIGH, choices=EDUCATIONAL_LEVEL, blank=False, null=True)
+                                 max_length=20, default=SECONDARY, choices=EDUCATIONAL_LEVEL, blank=False, null=True)
     lastwork = models.CharField(
         _('Last Place of Work'), help_text='where was the last place you worked ?', max_length=125, null=True, blank=True)
     position = models.CharField(

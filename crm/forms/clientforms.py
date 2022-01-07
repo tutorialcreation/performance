@@ -45,7 +45,7 @@ class ClientForms(forms.ModelForm):
                 Field('contract_period'),
                 Field('final_proposal_amounts'),
                 Div(
-                    ButtonHolder(Submit('submit', 'submit')),
+                    ButtonHolder(Submit('submit', 'submit', css_class='btn btn-success')),
                 )
             )
 
@@ -88,7 +88,7 @@ class ContactForms(forms.ModelForm):
                 Field('client'),
                 Field('service_line'),
                 Div(
-                    ButtonHolder(Submit('submit', 'submit')),
+                    ButtonHolder(Submit('submit', 'submit', css_class='btn btn-success')),
                 )
             )
 

@@ -98,8 +98,6 @@ def dashboard_employees_create(request):
             instance.othername = request.POST.get('othername')
             instance.sex = request.POST.get('sex')
             instance.bio = request.POST.get('bio')
-            instance.birthday = datetime.strptime(
-                request.POST.get('birthday'), '%d/%m/%y').date().isoformat()
 
             religion_id = request.POST.get('religion', None)
             religion = Religion.objects.get(id=religion_id)

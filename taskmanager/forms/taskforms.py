@@ -83,7 +83,7 @@ class TaskUpdateForm(forms.ModelForm):
                     Fieldset('Add Task(s)',
                     Formset('subtasks')),
                     HTML("<br>"),
-                    ButtonHolder(Submit('submit', 'submit')),
+                    ButtonHolder(Submit('submit', 'submit', css_class='btn btn-success')),
                 )
             )
 
