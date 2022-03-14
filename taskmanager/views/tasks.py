@@ -14,19 +14,18 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_http_methods
-from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.template.loader import render_to_string
 from django.forms import ModelForm
+from rest_framework.response import Response
 from django.conf import settings
 from django.template import Template
 from django.http.response import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.models import User
 from django.forms import formset_factory
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Func
+from rest_framework import status
 from django.db import transaction
 from bootstrap_modal_forms.generic import (BSModalCreateView,
                                            BSModalUpdateView,
@@ -74,13 +73,19 @@ from taskmanager.forms.taskforms import (
     InvoicingForm
 )
 from django.urls import reverse, reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework import viewsets
+
+from taskmanager.serializers.tasks_serializer import TaskSerializer
 
 
-class TaskCreate(CreateView):
+class TaskCreate(LoginRequiredMixin, CreateView):
     '''
     this task creation has formsets.
     '''
     model = Task
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
     template_name = 'taskmanager/task_create.html'
     form_class = TaskCreationForm
     success_message = 'You have successfully created a project. Thank you'
@@ -126,11 +131,20 @@ class TaskCreate(CreateView):
                 target_users = []
                 for data in all_subtasks:
                     target_emails.append(data.member_assigned.email)
-                
+
                 target_users.append(data.member_assigned)
                 send_mail(subject, message, settings.FROM_EMAIL,
                           target_emails, html_message=html_content)
         return super(TaskCreate, self).form_valid(form)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 class TaskBidCreate(CreateView):
@@ -299,7 +313,6 @@ def task_detail(request, task_id):
         )
     else:
         raise PermissionDenied
-
 
 
 class ExtendDeadline(BSModalUpdateView):
@@ -522,7 +535,6 @@ class SubTaskRating(BSModalUpdateView):
         else:
             raise PermissionDenied
         return redirect(reverse('taskmanager:team_detail', kwargs={'team_id': task.team_id}))
-
 
 
 @login_required
@@ -830,4 +842,3 @@ def task_sources(request):
         form = TaskSourceForm()
         context = {'form': form}
         return render(request, 'taskmanager/task_source.html', context)
-

@@ -5,11 +5,15 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from rest_framework.routers import DefaultRouter
 from taskmanager import views
 
 # from . import views
 
 app_name = 'taskmanager'
+router = DefaultRouter()
+router.register("task",views.TaskCreate)
+
 
 urlpatterns = [
     path('', views.index, name='index'),

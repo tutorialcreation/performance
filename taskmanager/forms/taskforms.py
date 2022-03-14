@@ -416,6 +416,7 @@ class SignUpForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+        
 
 
 class DateRangeInput(forms.Form):
