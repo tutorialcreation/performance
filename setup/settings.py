@@ -171,7 +171,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ORIGIN_WHITELIST = (
     'https://humanresourcesys.herokuapp.com',
+    'http://humanresourcesys.herokuapp.com',
 )
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://humanresourcesys.herokuapp.com',
+    'http://humanresourcesys.herokuapp.com',
+]
 
 
 LOGGING = {
