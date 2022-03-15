@@ -259,13 +259,13 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 
 
-EMAIL_HOST_USER='martin.bironga@actserv.co.ke'
+EMAIL_HOST_USER='tutorialcreation81@gmail.com'
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT=587
 EMAIL_HOST_PASSWORD="luther1996-"
 EMAIL_USE_TLS=True
-FROM_EMAIL="brooks-no-reply@actserv.co.ke"
-DEFAULT_FROM_EMAIL="brooks-no-reply@actserv.co.ke"
+FROM_EMAIL="tutorialcreation81@gmail.com"
+DEFAULT_FROM_EMAIL="tutorialcreation81@gmail.com"
 
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS=7
 ACCOUNT_EMAIL_REQUIRED = True
